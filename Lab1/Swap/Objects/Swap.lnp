@@ -1,0 +1,3 @@
+".\Objects\swap.obj" 
+TO ".\Objects\Swap" 
+PRINT(".\Listings\Swap.m51") RAMSIZE(256) 

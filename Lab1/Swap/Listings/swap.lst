@@ -1,0 +1,51 @@
+A51 MACRO ASSEMBLER  SWAP                                                                 07/25/2017 14:48:12 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\swap.obj
+ASSEMBLER INVOKED BY: Z:\home\sarthakn69\Keil\C51\BIN\A51.EXE swap.asm SET(SMALL) DEBUG PRINT(.\Listings\swap.lst) OBJEC
+                      T(.\Objects\swap.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; My first program
+
+0000                   2     Org 0h ; Org command lets us define the origin reference
+
+0000 020100            3     ljmp main
+
+0100                   4     Org 100h
+
+                       5     
+
+0100                   6     main:
+
+0100 757020            7     MOV 70H,#20H ; # represents data
+
+0103 757121            8     MOV 71H,#21H
+
+0106 E570              9     MOV A,70H
+
+0108 857170           10     MOV 70H,71H
+
+010B F571             11     MOV 71H,A
+
+010D 22               12     RET
+
+                      13     END
+
+A51 MACRO ASSEMBLER  SWAP                                                                 07/25/2017 14:48:12 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+MAIN . . . . . . .  C ADDR   0100H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

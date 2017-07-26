@@ -1,0 +1,64 @@
+A51 MACRO ASSEMBLER  SQR_WAVE                                                             07/25/2017 15:08:46 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\sqr_wave.obj
+ASSEMBLER INVOKED BY: Z:\home\sarthakn69\Keil\C51\BIN\A51.EXE sqr_wave.asm SET(SMALL) DEBUG PRINT(.\Listings\sqr_wave.ls
+                      t) OBJECT(.\Objects\sqr_wave.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Generates a square wave
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+0100                   4     org 100h
+
+                       5             
+
+0100                   6     main: 
+
+0100 D297              7             setb p1.7 ; setting the 7th bit of port 1 
+
+0102 310A              8             acall delay ; absolute call 
+
+0104 C297              9             clr p1.7 
+
+0106 310A             10             acall delay
+
+0108 80F6             11             sjmp main
+
+                      12     
+
+010A                  13     delay: 
+
+010A 7964             14             mov R1, #100 ; default decimal
+
+010C                  15             here: 
+
+010C D9FE             16                     djnz R1, here ; decrement and jump if not zero 
+
+010E 22               17     ret
+
+                      18     end
+
+A51 MACRO ASSEMBLER  SQR_WAVE                                                             07/25/2017 15:08:46 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY. . . . . . .  C ADDR   010AH   A   
+HERE . . . . . . .  C ADDR   010CH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

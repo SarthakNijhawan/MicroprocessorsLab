@@ -1,0 +1,53 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        07/25/2017  15:08:46  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+Z:\HOME\SARTHAKN69\KEIL\C51\BIN\BL51.EXE .\Objects\sqr_wave.obj TO .\Objects\sqr_wave PRINT (.\Listings\sqr_wave.m51) RA
+>> MSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\sqr_wave.obj (SQR_WAVE)
+
+
+LINK MAP OF MODULE:  .\Objects\sqr_wave (SQR_WAVE)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     010FH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\sqr_wave (SQR_WAVE)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        SQR_WAVE
+  C:010AH         SYMBOL        DELAY
+  C:010CH         SYMBOL        HERE
+  C:0100H         SYMBOL        MAIN
+  D:0090H         SYMBOL        P1
+  C:0000H         LINE#         3
+  C:0100H         LINE#         7
+  C:0102H         LINE#         8
+  C:0104H         LINE#         9
+  C:0106H         LINE#         10
+  C:0108H         LINE#         11
+  C:010AH         LINE#         14
+  C:010CH         LINE#         16
+  C:010EH         LINE#         17
+  -------         ENDMOD        SQR_WAVE
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0012H BYTE ( 0%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=271
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
