@@ -1,0 +1,50 @@
+A51 MACRO ASSEMBLER  QUESTION1                                                            07/30/2017 22:11:21 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question1.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question1.asm SET(SMALL) DEBUG PRINT(.\Listings\question1.lst) OBJECT(.
+                      \Objects\question1.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Adds two numbers at 50h & 60h and stores the result at 70h
+
+                       2     
+
+0000                   3     org 0h
+
+0000 020100            4     ljmp main
+
+0100                   5     org 100h
+
+                       6     
+
+0100                   7     main:
+
+0100 E550              8             mov A,50h
+
+0102 2560              9             add A,60h
+
+0104 F570             10             mov 70h,A
+
+0106 80FE             11             here: sjmp here
+
+                      12     END
+
+A51 MACRO ASSEMBLER  QUESTION1                                                            07/30/2017 22:11:21 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+HERE . . . . . . .  C ADDR   0106H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

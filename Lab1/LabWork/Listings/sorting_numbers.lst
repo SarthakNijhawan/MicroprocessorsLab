@@ -1,0 +1,147 @@
+A51 MACRO ASSEMBLER  SORTING_NUMBERS                                                      07/31/2017 11:46:54 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\sorting_numbers.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE sorting_numbers.asm SET(SMALL) DEBUG PRINT(.\Listings\sorting_numbers.l
+                      st) OBJECT(.\Objects\sorting_numbers.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Sort 5 numbers stored in contiguous location
+
+                       2     
+
+0000                   3     org 0h
+
+0000 020100            4     ljmp main
+
+                       5             
+
+0003                   6     Sort:
+
+0003 8004              7             sjmp start
+
+0005                   8             swap_:
+
+0005 E6                9                     mov A,@r0
+
+0006 C7               10                     xch A,@r1
+
+0007 C6               11                     xch A,@r0
+
+0008 22               12                     RET
+
+                      13                     
+
+0009                  14     start:
+
+0009 7860             15     mov r0,#60h
+
+000B 7970             16     mov r1,#70h
+
+000D 7A05             17     mov r2,#5
+
+                      18     
+
+000F                  19     copy: ; Copy all the numbers to the new locations
+
+000F E6               20             mov A,@r0
+
+0010 F7               21             mov @r1,A
+
+0011 09               22             inc r1
+
+0012 08               23             inc r0
+
+0013 DAFA             24             djnz r2, copy
+
+                      25     
+
+0015 7A04             26             mov r2,#4
+
+                      27             
+
+0017                  28     main_loop:
+
+0017 7870             29             mov r0,#70h
+
+0019 7971             30             mov r1,#71h
+
+                      31             
+
+001B                  32             inner_loop:
+
+001B E6               33                     mov A,@r0
+
+001C C3               34                     clr c
+
+001D 97               35                     subb A,@r1
+
+001E 4002             36                     jc skip
+
+0020 1105             37                     acall swap_
+
+                      38                     
+
+0022                  39                     skip:
+
+0022 08               40                             inc r0
+
+0023 09               41                             inc r1
+
+0024 B874F4           42                             cjne r0, #74h, inner_loop
+
+0027 DAEE             43                     djnz r2, main_loop
+
+0029 22               44     RET
+
+                      45     
+
+0100                  46     org 100h
+
+0100                  47     main:
+
+0100 75600C           48             mov 60h,#12
+
+0103 756103           49             mov 61h,#3
+
+0106 75620A           50             mov 62h,#10     
+
+0109 756308           51             mov 63h,#8
+
+010C 756407           52             mov 64h,#7
+
+                      53             
+
+010F 1103             54             acall sort
+
+                      55     
+
+0111 80FE             56     stop: sjmp stop
+
+                      57     END
+
+A51 MACRO ASSEMBLER  SORTING_NUMBERS                                                      07/31/2017 11:46:54 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+COPY . . . . . . .  C ADDR   000FH   A   
+INNER_LOOP . . . .  C ADDR   001BH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+MAIN_LOOP. . . . .  C ADDR   0017H   A   
+SKIP . . . . . . .  C ADDR   0022H   A   
+SORT . . . . . . .  C ADDR   0003H   A   
+START. . . . . . .  C ADDR   0009H   A   
+STOP . . . . . . .  C ADDR   0111H   A   
+SWAP_. . . . . . .  C ADDR   0005H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

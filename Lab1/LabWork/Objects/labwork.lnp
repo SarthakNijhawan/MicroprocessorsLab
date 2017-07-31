@@ -1,0 +1,3 @@
+".\Objects\subtraction.obj" 
+TO ".\Objects\labwork" 
+PRINT(".\Listings\labwork.m51") RAMSIZE(256) 

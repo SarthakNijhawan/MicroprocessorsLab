@@ -1,0 +1,73 @@
+A51 MACRO ASSEMBLER  QUESTION2                                                            07/30/2017 22:34:57 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question2.asm SET(SMALL) DEBUG PRINT(.\Listings\question2.lst) OBJECT(.
+                      \Objects\question2.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Stores the partial sum into contiguous memory locations starting from 50h
+
+                       2     
+
+0000                   3     org 0h
+
+0000 020100            4     ljmp main
+
+0100                   5     org 100h
+
+                       6     
+
+0100                   7     main:
+
+0100 75500A            8             mov 50h,#10 ; Say, we calculate partial sum of 10 numbers and store them contiguous
+                             ly in memory
+
+0103 7850              9             mov r0,#50h ; Used for accessing memloc indirectly
+
+0105 7900             10             mov r1,#00h ; Gets incremented and added to the total after each iteration 
+
+0107 E4               11             clr A
+
+0108                  12             loop:
+
+0108 C9               13                     xch A,r1
+
+0109 09               14                     inc r1
+
+010A 29               15                     add A,r1
+
+010B 08               16                     inc r0
+
+010C F6               17                     mov @r0,A
+
+010D C9               18                     xch A,r1 ; Exchange the value of the registers for comparison in Accumulato
+                             r
+
+010E B550F7           19                     cjne A, 50h, loop
+
+                      20                     
+
+0111 80FE             21     here: sjmp here
+
+                      22     END
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            07/30/2017 22:34:57 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+HERE . . . . . . .  C ADDR   0111H   A   
+LOOP . . . . . . .  C ADDR   0108H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

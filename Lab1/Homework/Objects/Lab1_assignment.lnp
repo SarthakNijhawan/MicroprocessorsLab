@@ -1,0 +1,3 @@
+".\Objects\question2.obj" 
+TO ".\Objects\Lab1_assignment" 
+PRINT(".\Listings\Lab1_assignment.m51") RAMSIZE(256) 

@@ -1,0 +1,73 @@
+A51 MACRO ASSEMBLER  ADDITION                                                             07/31/2017 00:08:43 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\addition.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE addition.asm SET(SMALL) DEBUG PRINT(.\Listings\addition.lst) OBJECT(.\O
+                      bjects\addition.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Addition of 2 16-bit numbers
+
+                       2     
+
+0000                   3     org 0h
+
+0000 020100            4     ljmp main
+
+0100                   5     org 100h
+
+                       6     
+
+0100                   7     main:
+
+0100 75500A            8             mov 50h,#10
+
+0103 7800              9             mov r0,#0
+
+0105 7950             10             mov r1,#50h
+
+0107 7A00             11             mov r2,#0
+
+                      12             
+
+0109                  13             loop:
+
+0109 E8               14                     mov a,r0
+
+010A 09               15                     inc r1
+
+010B 0A               16                     inc r2
+
+010C 2A               17                     add A,r2
+
+010D F7               18                     mov @r1,A
+
+010E F8               19                     mov r0,A
+
+010F EA               20                     mov A,r2
+
+0110 B550F6           21                     cjne A, 50h, loop
+
+0113 80FE             22             stop: sjmp stop
+
+                      23     END
+
+A51 MACRO ASSEMBLER  ADDITION                                                             07/31/2017 00:08:43 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+LOOP . . . . . . .  C ADDR   0109H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+STOP . . . . . . .  C ADDR   0113H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,99 @@
+A51 MACRO ASSEMBLER  MY_ADDITION                                                          07/31/2017 14:51:02 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\my_addition.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE my_addition.asm SET(SMALL) DEBUG PRINT(.\Listings\my_addition.lst) OBJE
+                      CT(.\Objects\my_addition.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Adds 2 16-bits numbers in 2's complement form
+
+                       2     
+
+0000                   3     org 0h;
+
+0000 020100            4     ljmp main
+
+                       5     
+
+0003                   6     addition:
+
+0003 E561              7             mov A,61h
+
+0005 2571              8             add A,71h
+
+0007 F564              9             mov 64h,A
+
+0009 E560             10             mov A,60h
+
+000B 3570             11             addc A,70h
+
+000D F563             12             mov 63h,A
+
+000F E560             13             mov A,60h
+
+0011 6570             14             xrl A,70h
+
+0013 F5F0             15             mov B,A
+
+0015 E4               16             clr A
+
+0016 3400             17             addc A,#0
+
+0018 30F703           18             jnb 0f7h, skip
+
+001B F4               19             cpl A
+
+001C 5401             20             anl A,#1h
+
+001E F562             21             skip: mov 62h,A
+
+                      22             
+
+0020 22               23     RET
+
+                      24             
+
+0100                  25     org 100h
+
+0100                  26     main:
+
+0100 7560FF           27             mov 60h,#0ffh
+
+0103 7561FF           28             mov 61h,#0ffh
+
+0106 7570FF           29             mov 70h,#0ffh
+
+0109 7571FF           30             mov 71h,#0ffh
+
+                      31             
+
+010C 1103             32             acall addition
+
+                      33             
+
+010E 80FE             34             here: sjmp here
+
+                      35     END
+
+A51 MACRO ASSEMBLER  MY_ADDITION                                                          07/31/2017 14:51:02 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADDITION . . . . .  C ADDR   0003H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+HERE . . . . . . .  C ADDR   010EH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+SKIP . . . . . . .  C ADDR   001EH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

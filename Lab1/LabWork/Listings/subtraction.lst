@@ -1,0 +1,128 @@
+A51 MACRO ASSEMBLER  SUBTRACTION                                                          07/31/2017 15:16:42 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\subtraction.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE subtraction.asm SET(SMALL) DEBUG PRINT(.\Listings\subtraction.lst) OBJE
+                      CT(.\Objects\subtraction.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Subtract 2 numbers
+
+                       2     
+
+0000                   3     org 0h
+
+0000 020100            4     ljmp main
+
+                       5     
+
+0003                   6     addition:
+
+0003 C3                7             clr c
+
+0004 E561              8             mov A,61h
+
+0006 28                9             add A,r0
+
+0007 F564             10             mov 64h,A
+
+0009 E560             11             mov A,60h
+
+000B 39               12             addc A,r1
+
+000C F563             13             mov 63h,A
+
+000E E9               14             mov A,r1
+
+000F 6560             15             xrl A,60h
+
+0011 F5F0             16             mov B,A
+
+0013 E4               17             clr A
+
+0014 3400             18             addc A,#0
+
+0016 30F703           19             jnb 0f7h, skip
+
+0019 F4               20             cpl A
+
+001A 5401             21             anl A,#1h
+
+001C F562             22             skip: mov 62h,A
+
+                      23             
+
+001E 22               24     RET
+
+                      25             
+
+001F                  26     subtraction:
+
+001F 8570F0           27             mov B,70h
+
+0022 E571             28             mov A,71h
+
+0024 F4               29             cpl A
+
+0025 2401             30             add A,#1
+
+0027 F8               31             mov r0,A
+
+0028 E5F0             32             mov A,B
+
+002A F4               33             cpl A
+
+002B 3400             34             addc A,#0
+
+002D F9               35             mov r1,A
+
+002E 1103             36             acall addition
+
+0030 22               37     RET
+
+                      38     
+
+0100                  39     org 100h
+
+0100                  40     main:
+
+0100 7560FF           41             mov 60h,#0ffh
+
+0103 7561FF           42             mov 61h,#0ffh
+
+0106 757001           43             mov 70h,#01h
+
+0109 7571FF           44             mov 71h,#0ffh
+
+                      45             
+
+010C 111F             46             acall subtraction
+
+                      47             
+
+010E 80FE             48             here: sjmp here
+
+                      49     END
+
+A51 MACRO ASSEMBLER  SUBTRACTION                                                          07/31/2017 15:16:42 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADDITION . . . . .  C ADDR   0003H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+HERE . . . . . . .  C ADDR   010EH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+SKIP . . . . . . .  C ADDR   001CH   A   
+SUBTRACTION. . . .  C ADDR   001FH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
