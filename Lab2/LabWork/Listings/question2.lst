@@ -1,0 +1,319 @@
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/05/2017 23:12:26 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question2.asm SET(SMALL) DEBUG PRINT(.\Listings\question2.lst) OBJECT(.
+                      \Objects\question2.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     org 0h
+
+0000 020100            2     ljmp main
+
+                       3     
+
+0003                   4     delay:
+
+0003 7CC8              5             mov r4,#200
+
+0005                   6         back1:
+
+0005 7DFF              7         mov r5,#0FFH
+
+0007                   8         back:
+
+0007 DDFE              9             djnz r5, back
+
+0009 DCFA             10         djnz r4, back1
+
+000B 22               11     ret
+
+                      12     
+
+000C                  13     zeroOut:
+
+000C A950             14             mov r1,50h ; N
+
+000E A851             15             mov r0,51h ; Pointer
+
+0010                  16             loop:
+
+0010 7600             17                     mov @r0,#0
+
+0012 08               18                     inc r0
+
+0013 D9FB             19                     djnz r1, loop
+
+0015 22               20     ret
+
+                      21     
+
+0016                  22     display:
+
+0016 A850             23             mov r0,50h ; N
+
+0018 A951             24             mov r1,51h ; Ptr
+
+001A 7A0F             25             mov r2,#0fh ; To read the last 4 pins only
+
+001C                  26             disploop:
+
+001C AB4F             27                     mov r3,4fh ; 20 iterations of the delay subroutine will give us a delay of 
+                             1s
+
+001E E7               28                     mov A,@r1
+
+001F 09               29                     inc r1
+
+0020 5A               30                     anl A,r2
+
+0021 F590             31                     mov 90h,A
+
+0023                  32                     delay1:
+
+                      33                             ;lcall delay
+
+0023 DBFE             34                             djnz r3, delay1
+
+0025 D8F5             35                     djnz r0,disploop
+
+0027 22               36     ret
+
+                      37     
+
+0028                  38     bin2ascii:
+
+0028 AA50             39             mov r2,50h ; N
+
+002A A951             40             mov r1,51h ; Read pointer
+
+002C A852             41             mov r0,52h ; Write pointer
+
+002E 7BF0             42             mov r3,#0f0h ; Starts the loop by extracting the lower 4-bits
+
+                      43             
+
+0030                  44             b2aloop:
+
+0030 E7               45                     mov A,@r1
+
+0031 5B               46                     anl A,r3 ; Lower 4-bits
+
+0032 F6               47                     mov @r0,A
+
+0033 08               48                     inc r0
+
+0034 EB               49                     mov A,r3
+
+0035 F4               50                     cpl A
+
+0036 57               51                     anl A,@r1 ; Upper 4-bits
+
+0037 F6               52                     mov @r0,A
+
+0038 08               53                     inc r0
+
+0039 09               54                     inc r1
+
+003A DAF4             55             djnz r2,b2aloop
+
+003C 22               56     ret
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/05/2017 23:12:26 PAGE     2
+
+                      57     
+
+003D                  58     compare: ; Compares 2 operands stored in r0 and r1
+
+003D C3               59             clr c
+
+003E E8               60             mov A,r0
+
+003F 99               61             subb A,r1
+
+0040 22               62     ret
+
+                      63     
+
+0041                  64     memcpy:
+
+0041 AA50             65             mov r2,50h ; N
+
+0043 A851             66             mov r0,51h ; Read Pointer
+
+0045 A952             67             mov r1,52h ; Write Pointer
+
+0047 113D             68             acall compare 
+
+0049 4009             69             jc skip ; c is zero when Write Ptr < Read Ptr
+
+                      70             ; Code
+
+004B                  71             loop1:
+
+004B E6               72                     mov A,@r0
+
+004C F7               73                     mov @r1,A
+
+004D 08               74                     inc r0
+
+004E 09               75                     inc r1
+
+004F DAFA             76                     djnz r2, loop1
+
+0051 020064           77             ljmp completed
+
+0054                  78             skip: ; Write Pointer > Read Pointer
+
+                      79             ; Code
+
+0054 EA               80                     mov A,r2
+
+0055 29               81                     add A,r1
+
+0056 9401             82                     subb A,#1
+
+0058 F9               83                     mov r1,A
+
+0059 EA               84                     mov A,r2
+
+005A 28               85                     add A,r0
+
+005B 9401             86                     subb A,#1
+
+005D F8               87                     mov r0,A
+
+005E                  88                     loop2:
+
+005E E6               89                             mov A,@r0
+
+005F F7               90                             mov @r1,A
+
+0060 18               91                             dec r0
+
+0061 19               92                             dec r1
+
+0062 DAFA             93                             djnz r2, loop2                  
+
+0064 00               94             completed: nop
+
+0065 22               95     ret
+
+                      96     
+
+                      97     ;;;; Main Program
+
+                      98     
+
+0100                  99     ORG 100H
+
+0100                 100     MAIN:
+
+0100 79AC            101     mov r1,#0ach
+
+0102 7A08            102     mov r2,#8
+
+                     103     
+
+0104                 104     write:
+
+0104 E9              105             mov A,r1
+
+0105 F7              106             mov @r1,A
+
+0106 09              107             inc r1
+
+0107 DAFB            108     djnz r2, write
+
+                     109     
+
+0109 7581CF          110     MOV SP,#0CFH;-----------------------Initialize STACK POINTER
+
+010C 755008          111     MOV 50H,#8;------------------------No of memory locations of Array A
+
+010F 755180          112     MOV 51H,#80h;------------------------Array A start location
+
+0112 12000C          113     LCALL zeroOut;----------------------Clear memory
+
+                     114     
+
+0115 755008          115     MOV 50H,#8;------------------------No of memory locations of Array B
+
+0118 755188          116     MOV 51H,#88h;------------------------Array B start location
+
+011B 12000C          117     LCALL zeroOut;----------------------Clear memory
+
+                     118     
+
+011E 755008          119     MOV 50H,#8;------------------------No of memory locations of source array
+
+0121 7551AC          120     MOV 51H,#0ach;------------------------Source array start location
+
+0124 755280          121     MOV 52H,#80h;------------------------Destination array(A) start location
+
+0127 120028          122     LCALL bin2ascii;--------------------Write at memory location
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/05/2017 23:12:26 PAGE     3
+
+                     123     
+
+012A 755010          124     MOV 50H,#16;------------------------No of elements of Array A to be copied in Array B
+
+012D 755180          125     MOV 51H,#80h;------------------------Array A start location
+
+0130 755288          126     MOV 52H,#88h;------------------------Array B start location
+
+0133 120041          127     LCALL memcpy;-----------------------Copy block of memory to other location
+
+                     128     
+
+0136 755008          129     MOV 50H,#8;------------------------No of memory locations of Array B
+
+0139 755188          130     MOV 51H,#88h;------------------------Array B start location
+
+013C 754F05          131     MOV 4FH,#5;------------------------User defined delay value
+
+013F 120016          132     LCALL display;----------------------Display the last four bits of elements on LEDs
+
+                     133     
+
+0142 80FE            134     here:SJMP here;---------------------WHILE loop(Infinite Loop)
+
+                     135     END
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/05/2017 23:12:26 PAGE     4
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B2ALOOP. . . . . .  C ADDR   0030H   A   
+BACK . . . . . . .  C ADDR   0007H   A   
+BACK1. . . . . . .  C ADDR   0005H   A   
+BIN2ASCII. . . . .  C ADDR   0028H   A   
+COMPARE. . . . . .  C ADDR   003DH   A   
+COMPLETED. . . . .  C ADDR   0064H   A   
+DELAY. . . . . . .  C ADDR   0003H   A   
+DELAY1 . . . . . .  C ADDR   0023H   A   
+DISPLAY. . . . . .  C ADDR   0016H   A   
+DISPLOOP . . . . .  C ADDR   001CH   A   
+HERE . . . . . . .  C ADDR   0142H   A   
+LOOP . . . . . . .  C ADDR   0010H   A   
+LOOP1. . . . . . .  C ADDR   004BH   A   
+LOOP2. . . . . . .  C ADDR   005EH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+MEMCPY . . . . . .  C ADDR   0041H   A   
+SKIP . . . . . . .  C ADDR   0054H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+WRITE. . . . . . .  C ADDR   0104H   A   
+ZEROOUT. . . . . .  C ADDR   000CH   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
