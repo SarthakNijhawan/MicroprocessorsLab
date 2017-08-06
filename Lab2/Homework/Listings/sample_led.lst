@@ -1,0 +1,123 @@
+A51 MACRO ASSEMBLER  SAMPLE_LED                                                           08/05/2017 09:40:27 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\sample_led.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE ..\sample_led.asm SET(SMALL) DEBUG PRINT(.\Listings\sample_led.lst) OBJ
+                      ECT(.\Objects\sample_led.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;---------------------------------------------------------------
+
+                       2     ;PROBLEM STATEMENT: BLINKING LEDS OF PORT0
+
+                       3     ;PURPOSE: 1. GOOD CODING STYLES 
+
+                       4     ;         2. USING PUSH, POP INSTRUCTIONS IN SUBROUTINES
+
+                       5     ;---------------------------------------------------------------
+
+                       6     
+
+  0080                 7             LED EQU P0
+
+                       8     
+
+0000                   9             ORG 00H
+
+0000 020066           10             LJMP MAIN
+
+                      11     
+
+                      12     
+
+                      13     ;----------------------------------------------------------------
+
+0050                  14             ORG 50H
+
+                      15     
+
+0050                  16     DELAY:
+
+                      17             USING 0         ;ASSEMBLER DIRECTIVE TO INDICATE REGISTER BANK0
+
+0050 C0D0             18                     PUSH PSW
+
+0052 C001             19                     PUSH AR1        ; STORE R1 (BANK O) ON THE STACK
+
+0054 C002             20                     PUSH AR2
+
+                      21     
+
+0056 79FF             22                     MOV R1, #0FFH
+
+0058 7AFF             23                     MOV R2, #0FFH
+
+005A                  24     DELAY1:
+
+005A 00               25                     NOP
+
+005B D9FD             26                     DJNZ R1, DELAY1
+
+005D DAFB             27                     DJNZ R2, DELAY1
+
+                      28     
+
+005F D002             29                     POP AR2         ; POP MUST BE IN REVERSE ORDER OF PUSH
+
+0061 D001             30                     POP AR1
+
+0063 D0D0             31                     POP PSW
+
+0065 22               32                     RET
+
+                      33     
+
+                      34     ;----------------------------------------------------------------------
+
+                      35     
+
+0066                  36     MAIN:
+
+0066 758000           37                     MOV LED,#00H            ;MAKE P0 OUTPUT PORT
+
+0069 7455             38                     MOV A,#55H                      ;01010101B
+
+006B F580             39             BACK:MOV LED,A
+
+006D 120050           40                     LCALL DELAY
+
+0070 F4               41                     CPL A                   ;10101010B
+
+0071 80F8             42                     SJMP BACK               ;INFINITE LOOP
+
+                      43     end
+
+                             
+
+                             ;--------------------------------------------------------------------------
+
+A51 MACRO ASSEMBLER  SAMPLE_LED                                                           08/05/2017 09:40:27 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+BACK . . . . . . .  C ADDR   006BH   A   
+DELAY. . . . . . .  C ADDR   0050H   A   
+DELAY1 . . . . . .  C ADDR   005AH   A   
+LED. . . . . . . .  D ADDR   0080H   A   
+MAIN . . . . . . .  C ADDR   0066H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

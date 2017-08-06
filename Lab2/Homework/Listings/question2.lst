@@ -1,0 +1,98 @@
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/05/2017 12:24:04 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question2.asm SET(SMALL) DEBUG PRINT(.\Listings\question2.lst) OBJECT(.
+                      \Objects\question2.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; LED blink at p1.7
+
+                       2     
+
+0000                   3     org 0h
+
+0000 020100            4     ljmp main
+
+                       5     
+
+0003                   6     delay: ; delay function basically takes 50ms in one call
+
+0003 7AC8              7             mov R2,#200
+
+0005                   8         back1:
+
+0005 79FF              9         mov R1,#0FFH
+
+0007                  10         back:
+
+0007 D9FE             11             djnz R1, back
+
+0009 DAFA             12         djnz R2, back1
+
+000B 22               13     ret
+
+                      14     
+
+0100                  15     org 100h
+
+0100                  16     main:
+
+0100 759000           17             mov p1,#0
+
+0103 754F05           18             mov 4fh,#5
+
+0106 E54F             19             mov A,4fh ; This is D
+
+0108 75F002           20             mov B,#2
+
+010B 84               21             div AB
+
+010C 75F014           22             mov B,#20
+
+010F A4               23             mul AB ; Now A has the total number of times delay must be called
+
+0110 D297             24             setb P1.7
+
+0112                  25             blink:
+
+0112 F8               26                     mov r0,A
+
+0113                  27                     delay1:
+
+0113 1103             28                             acall delay
+
+0115 D8FC             29                             djnz r0, delay1
+
+0117 B297             30                     cpl P1.7
+
+0119 020112           31                     ljmp blink
+
+                      32             
+
+                      33     end
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/05/2017 12:24:04 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   0007H   A   
+BACK1. . . . . . .  C ADDR   0005H   A   
+BLINK. . . . . . .  C ADDR   0112H   A   
+DELAY. . . . . . .  C ADDR   0003H   A   
+DELAY1 . . . . . .  C ADDR   0113H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

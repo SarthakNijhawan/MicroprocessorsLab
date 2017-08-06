@@ -1,0 +1,81 @@
+A51 MACRO ASSEMBLER  QUESTION3                                                            08/05/2017 09:59:29 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question3.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question3.asm SET(SMALL) DEBUG PRINT(.\Listings\question3.lst) OBJECT(.
+                      \Objects\question3.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Subroutine Zero-out
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0003                   5     zeroOut:
+
+0003 A950              6             mov r1,50h ; N
+
+0005 A851              7             mov r0,51h ; Pointer
+
+0007                   8             loop:
+
+0007 7600              9                     mov @r0,#0
+
+0009 08               10                     inc r0
+
+000A D9FB             11                     djnz r1, loop
+
+000C 22               12     ret
+
+                      13     
+
+0100                  14     org 100h
+
+0100                  15     main:
+
+0100 7966             16             mov r1,#66h
+
+0102                  17             random:
+
+0102 7708             18                     mov @r1,#8
+
+0104 09               19                     inc r1
+
+0105 B96AFA           20                     cjne r1, #6ah, random
+
+                      21     
+
+0108 755004           22             mov 50h,#4
+
+010B 755166           23             mov 51h,#66h
+
+010E 1103             24             acall zeroOut
+
+0110 80FE             25             stop: sjmp stop
+
+                      26     end
+
+A51 MACRO ASSEMBLER  QUESTION3                                                            08/05/2017 09:59:29 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+LOOP . . . . . . .  C ADDR   0007H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+RANDOM . . . . . .  C ADDR   0102H   A   
+STOP . . . . . . .  C ADDR   0110H   A   
+ZEROOUT. . . . . .  C ADDR   0003H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

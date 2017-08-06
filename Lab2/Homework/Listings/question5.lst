@@ -1,0 +1,107 @@
+A51 MACRO ASSEMBLER  QUESTION5                                                            08/05/2017 13:28:25 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question5.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question5.asm SET(SMALL) DEBUG PRINT(.\Listings\question5.lst) OBJECT(.
+                      \Objects\question5.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; bin2ascii subroutine
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0003                   5     bin2ascii:
+
+0003 AA50              6             mov r2,50h ; N
+
+0005 A951              7             mov r1,51h ; Read pointer
+
+0007 A852              8             mov r0,52h ; Write pointer
+
+0009 7BF0              9             mov r3,#0f0h ; Starts the loop by extracting the lower 4-bits
+
+                      10             
+
+000B                  11             loop:
+
+000B E7               12                     mov A,@r1
+
+000C 5B               13                     anl A,r3 ; Lower 4-bits
+
+000D F6               14                     mov @r0,A
+
+000E 08               15                     inc r0
+
+000F EB               16                     mov A,r3
+
+0010 F4               17                     cpl A
+
+0011 57               18                     anl A,@r1 ; Upper 4-bits
+
+0012 F6               19                     mov @r0,A
+
+0013 08               20                     inc r0
+
+0014 09               21                     inc r1
+
+0015 DAF4             22             djnz r2,loop
+
+                      23             
+
+                      24             
+
+0017 22               25     ret
+
+                      26     
+
+0100                  27     org 100h
+
+0100                  28     main:
+
+0100 7966             29             mov r1,#66h
+
+0102                  30             random:
+
+0102 77FE             31                     mov @r1,#0feh
+
+0104 09               32                     inc r1
+
+0105 B96AFA           33                     cjne r1, #6ah, random
+
+0108 755004           34                     mov 50h,#4
+
+010B 755166           35                     mov 51h,#66h
+
+010E 755270           36                     mov 52h,#70h
+
+0111 1103             37                     acall bin2ascii
+
+0113 80FE             38     stop: sjmp stop
+
+                      39     end
+
+A51 MACRO ASSEMBLER  QUESTION5                                                            08/05/2017 13:28:25 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+BIN2ASCII. . . . .  C ADDR   0003H   A   
+LOOP . . . . . . .  C ADDR   000BH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+RANDOM . . . . . .  C ADDR   0102H   A   
+STOP . . . . . . .  C ADDR   0113H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

@@ -1,0 +1,3 @@
+".\Objects\question5.obj" 
+TO ".\Objects\homework" 
+PRINT(".\Listings\homework.m51") RAMSIZE(256) 
