@@ -7,15 +7,22 @@ bin2ascii:
 	mov r1,51h ; Read pointer
 	mov r0,52h ; Write pointer
 	mov r3,#0f0h ; Starts the loop by extracting the lower 4-bits
+	mov r4,#30h ; Upper Nible of ascii numbers
 	
 	loop:
 		mov A,@r1
-		anl A,r3 ; Lower 4-bits
-		mov @r0,A
+		anl A,r3 ; Upper 4-bits are extracted and lower bits are set to 0
+		mov r5,#4
+		rotate:
+			rr A
+		djnz r5,rotate
+		xrl A,r4 ; Lower bits are set to 0110
+		mov @r0,A 
 		inc r0
 		mov A,r3
 		cpl A
-		anl A,@r1 ; Upper 4-bits
+		anl A,@r1 ; Lower 4-bits and rest to 0
+		xrl A,r4
 		mov @r0,A
 		inc r0
 		inc r1
