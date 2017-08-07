@@ -43,15 +43,16 @@ ret
 
 org 100h
 main:
-mov r1,#65h
+mov r1,#80h
 	random:
 		mov A,r1
 		mov @r1,A
 		inc r1
-		cjne r1, #6ch, random
-	mov 50h,#7
-	mov 51h,#65h
-	mov 52h,#60h
+		cjne r1, #88h, random
+		
+	mov 50h,#8
+	mov 51h,#80h
+	mov 52h,#85h
 	acall memcpy
 	stop: sjmp stop
 end
