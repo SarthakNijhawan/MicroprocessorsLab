@@ -4,7 +4,7 @@ ljmp main
 
 zeroOut:
 	mov r1,50h ; N
-	mov r0,51h ; Pointer
+	mov r0,51h ; Starting Pointer
 	loop:
 		mov @r0,#0
 		inc r0
@@ -13,14 +13,16 @@ ret
 
 org 100h
 main:
-	mov r1,#66h
+	mov r1,#80h
 	random:
-		mov @r1,#8
+		mov A,r1
+		mov @r1,A
 		inc r1
-		cjne r1, #6ah, random
+		cjne r1, #88h, random
 
-	mov 50h,#4
-	mov 51h,#66h
+	mov 50h,#8
+	mov 51h,#80h
 	acall zeroOut
+	
 	stop: sjmp stop
 end

@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  QUESTION5                                                            08/06/2017 10:29:56 PAGE     1
+A51 MACRO ASSEMBLER  QUESTION5                                                            08/07/2017 00:50:21 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
@@ -16,91 +16,123 @@ LOC  OBJ            LINE     SOURCE
 
                        4     
 
-0003                   5     bin2ascii:
+0003                   5     write_lower_nibble: ; Lower nibble in 53h and write location in r0
 
-0003 AA50              6             mov r2,50h ; N
+                       6             using 0
 
-0005 A951              7             mov r1,51h ; Read pointer
+0003 C3                7                     clr c
 
-0007 A852              8             mov r0,52h ; Write pointer
+0004 940A              8                     subb A,#0ah
 
-0009 7BF0              9             mov r3,#0f0h ; Starts the loop by extracting the lower 4-bits
+0006 4005              9                     jc digit
 
-000B 7C30             10             mov r4,#30h ; Upper Nible of ascii numbers
+0008 2461             10                             add A,#61h
 
-                      11             
+000A F6               11                             mov @r0,A
 
-000D                  12             loop:
+000B 8005             12                     sjmp comp
 
-000D E7               13                     mov A,@r1
+000D                  13                     digit:
 
-000E 5B               14                     anl A,r3 ; Upper 4-bits are extracted and lower bits are set to 0
+000D E553             14                             mov A,53h
 
-000F 7D04             15                     mov r5,#4
+000F 2430             15                             add A,#30h
 
-0011                  16                     rotate:
+0011 F6               16                             mov @r0,A
 
-0011 03               17                             rr A
+0012 00               17                     comp: nop
 
-0012 DDFD             18                     djnz r5,rotate
+0013 22               18     ret
 
-0014 6C               19                     xrl A,r4 ; Lower bits are set to 0110
+                      19     
 
-0015 F6               20                     mov @r0,A 
+0014                  20     bin2ascii:
 
-0016 08               21                     inc r0
+0014 AA50             21             mov r2,50h ; N
 
-0017 EB               22                     mov A,r3
+0016 A951             22             mov r1,51h ; Read pointer
 
-0018 F4               23                     cpl A
+0018 A852             23             mov r0,52h ; Write pointer
 
-0019 57               24                     anl A,@r1 ; Lower 4-bits and rest to 0
+                      24             
 
-001A 6C               25                     xrl A,r4
+001A 7BF0             25             mov r3,#0f0h ; Starts the loop by extracting the lower 4-bits
 
-001B F6               26                     mov @r0,A
+                      26             
 
-001C 08               27                     inc r0
+001C                  27             loop:
 
-001D 09               28                     inc r1
+001C E7               28                     mov A,@r1
 
-001E DAED             29             djnz r2,loop
+001D 5B               29                     anl A,r3 ; higher nibble saved , rest all bits to 0
 
-                      30             
+001E 7C04             30                     mov r4,#4
 
-                      31             
+0020                  31                     rot: ; upper nibble is now in the lower half
 
-0020 22               32     ret
+0020 03               32                             rr A
 
-                      33     
+0021 DCFD             33                     djnz r4, rot
 
-0100                  34     org 100h
+0023 F553             34                     mov 53h,A
 
-0100                  35     main:
+0025 1103             35                     acall write_lower_nibble ; 53 is reserved for its argument parameter
 
-0100 7966             36             mov r1,#66h
+0027 08               36                     inc r0
 
-0102                  37             random:
+                      37                     
 
-0102 77FE             38                     mov @r1,#0feh
+0028 EB               38                     mov A,r3
 
-0104 09               39                     inc r1
+0029 F4               39                     cpl A
 
-0105 B96AFA           40                     cjne r1, #6ah, random
+002A 57               40                     anl A,@r1 ; Lower order bits recovered
 
-0108 755004           41                     mov 50h,#4
+002B F553             41                     mov 53h,A
 
-010B 755166           42                     mov 51h,#66h
+002D 1103             42                     acall write_lower_nibble
 
-010E 755270           43                     mov 52h,#70h
+002F 08               43                     inc r0
 
-0111 1103             44                     acall bin2ascii
+0030 09               44                     inc r1
 
-0113 80FE             45     stop: sjmp stop
+0031 DAE9             45             djnz r2,loop
 
-                      46     end
+0033 22               46     ret
 
-A51 MACRO ASSEMBLER  QUESTION5                                                            08/06/2017 10:29:56 PAGE     2
+                      47     
+
+0100                  48     org 100h
+
+0100                  49     main:
+
+0100 7980             50             mov r1,#80h
+
+0102                  51             random:
+
+0102 E9               52                     mov A,r1
+
+0103 F7               53                     mov @r1,A
+
+0104 09               54                     inc r1
+
+0105 B990FA           55                     cjne r1, #90h, random
+
+0108 755010           56                     mov 50h,#16
+
+010B 755180           57                     mov 51h,#80h
+
+A51 MACRO ASSEMBLER  QUESTION5                                                            08/07/2017 00:50:21 PAGE     2
+
+010E 755290           58                     mov 52h,#90h
+
+0111 1114             59                     acall bin2ascii
+
+0113 80FE             60     stop: sjmp stop
+
+                      61     end
+
+A51 MACRO ASSEMBLER  QUESTION5                                                            08/07/2017 00:50:21 PAGE     3
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -108,12 +140,15 @@ SYMBOL TABLE LISTING
 
 N A M E             T Y P E  V A L U E   ATTRIBUTES
 
-BIN2ASCII. . . . .  C ADDR   0003H   A   
-LOOP . . . . . . .  C ADDR   000DH   A   
+BIN2ASCII. . . . .  C ADDR   0014H   A   
+COMP . . . . . . .  C ADDR   0012H   A   
+DIGIT. . . . . . .  C ADDR   000DH   A   
+LOOP . . . . . . .  C ADDR   001CH   A   
 MAIN . . . . . . .  C ADDR   0100H   A   
 RANDOM . . . . . .  C ADDR   0102H   A   
-ROTATE . . . . . .  C ADDR   0011H   A   
+ROT. . . . . . . .  C ADDR   0020H   A   
 STOP . . . . . . .  C ADDR   0113H   A   
+WRITE_LOWER_NIBBLE  C ADDR   0003H   A   
 
 
 REGISTER BANK(S) USED: 0 

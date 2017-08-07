@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  QUESTION3                                                            08/05/2017 09:59:29 PAGE     1
+A51 MACRO ASSEMBLER  QUESTION3                                                            08/06/2017 23:46:07 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
@@ -20,7 +20,7 @@ LOC  OBJ            LINE     SOURCE
 
 0003 A950              6             mov r1,50h ; N
 
-0005 A851              7             mov r0,51h ; Pointer
+0005 A851              7             mov r0,51h ; Starting Pointer
 
 0007                   8             loop:
 
@@ -38,29 +38,33 @@ LOC  OBJ            LINE     SOURCE
 
 0100                  15     main:
 
-0100 7966             16             mov r1,#66h
+0100 7980             16             mov r1,#80h
 
 0102                  17             random:
 
-0102 7708             18                     mov @r1,#8
+0102 E9               18                     mov A,r1
 
-0104 09               19                     inc r1
+0103 F7               19                     mov @r1,A
 
-0105 B96AFA           20                     cjne r1, #6ah, random
+0104 09               20                     inc r1
 
-                      21     
+0105 B988FA           21                     cjne r1, #88h, random
 
-0108 755004           22             mov 50h,#4
+                      22     
 
-010B 755166           23             mov 51h,#66h
+0108 755008           23             mov 50h,#8
 
-010E 1103             24             acall zeroOut
+010B 755180           24             mov 51h,#80h
 
-0110 80FE             25             stop: sjmp stop
+010E 1103             25             acall zeroOut
 
-                      26     end
+                      26             
 
-A51 MACRO ASSEMBLER  QUESTION3                                                            08/05/2017 09:59:29 PAGE     2
+0110 80FE             27             stop: sjmp stop
+
+                      28     end
+
+A51 MACRO ASSEMBLER  QUESTION3                                                            08/06/2017 23:46:07 PAGE     2
 
 SYMBOL TABLE LISTING
 ------ ----- -------

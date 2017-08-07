@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        08/06/2017  10:29:56  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        08/07/2017  00:50:21  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -29,51 +29,65 @@ SYMBOL TABLE OF MODULE:  .\Objects\homework (QUESTION5)
   ----------------------------------
 
   -------         MODULE        QUESTION5
-  C:0003H         SYMBOL        BIN2ASCII
-  C:000DH         SYMBOL        LOOP
+  C:0014H         SYMBOL        BIN2ASCII
+  C:0012H         SYMBOL        COMP
+  C:000DH         SYMBOL        DIGIT
+  C:001CH         SYMBOL        LOOP
   C:0100H         SYMBOL        MAIN
   C:0102H         SYMBOL        RANDOM
-  C:0011H         SYMBOL        ROTATE
+  C:0020H         SYMBOL        ROT
   C:0113H         SYMBOL        STOP
+  C:0003H         SYMBOL        WRITE_LOWER_NIBBLE
   C:0000H         LINE#         3
-  C:0003H         LINE#         6
-  C:0005H         LINE#         7
-  C:0007H         LINE#         8
-  C:0009H         LINE#         9
-  C:000BH         LINE#         10
-  C:000DH         LINE#         13
-  C:000EH         LINE#         14
+  C:0003H         LINE#         7
+  C:0004H         LINE#         8
+  C:0006H         LINE#         9
+  C:0008H         LINE#         10
+  C:000AH         LINE#         11
+  C:000BH         LINE#         12
+  C:000DH         LINE#         14
   C:000FH         LINE#         15
-  C:0011H         LINE#         17
-  C:0012H         LINE#         18
-  C:0014H         LINE#         19
-  C:0015H         LINE#         20
-  C:0016H         LINE#         21
-  C:0017H         LINE#         22
+  C:0011H         LINE#         16
+  C:0012H         LINE#         17
+  C:0013H         LINE#         18
+  C:0014H         LINE#         21
+  C:0016H         LINE#         22
   C:0018H         LINE#         23
-  C:0019H         LINE#         24
   C:001AH         LINE#         25
-  C:001BH         LINE#         26
-  C:001CH         LINE#         27
-  C:001DH         LINE#         28
-  C:001EH         LINE#         29
+  C:001CH         LINE#         28
+  C:001DH         LINE#         29
+  C:001EH         LINE#         30
   C:0020H         LINE#         32
-  C:0100H         LINE#         36
-BL51 BANKED LINKER/LOCATER V6.22                                                      08/06/2017  10:29:56  PAGE 2
+  C:0021H         LINE#         33
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/07/2017  00:50:21  PAGE 2
 
 
-  C:0102H         LINE#         38
-  C:0104H         LINE#         39
-  C:0105H         LINE#         40
-  C:0108H         LINE#         41
-  C:010BH         LINE#         42
-  C:010EH         LINE#         43
-  C:0111H         LINE#         44
-  C:0113H         LINE#         45
+  C:0023H         LINE#         34
+  C:0025H         LINE#         35
+  C:0027H         LINE#         36
+  C:0028H         LINE#         38
+  C:0029H         LINE#         39
+  C:002AH         LINE#         40
+  C:002BH         LINE#         41
+  C:002DH         LINE#         42
+  C:002FH         LINE#         43
+  C:0030H         LINE#         44
+  C:0031H         LINE#         45
+  C:0033H         LINE#         46
+  C:0100H         LINE#         50
+  C:0102H         LINE#         52
+  C:0103H         LINE#         53
+  C:0104H         LINE#         54
+  C:0105H         LINE#         55
+  C:0108H         LINE#         56
+  C:010BH         LINE#         57
+  C:010EH         LINE#         58
+  C:0111H         LINE#         59
+  C:0113H         LINE#         60
   -------         ENDMOD        QUESTION5
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0036H BYTE ( 2%) *
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0049H BYTE ( 3%) *
 ******************************************************************************
 
 Program Size: data=8.0 xdata=0 code=277

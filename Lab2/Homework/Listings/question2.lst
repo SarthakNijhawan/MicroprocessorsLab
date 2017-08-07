@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/05/2017 12:24:04 PAGE     1
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/07/2017 00:17:39 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
@@ -18,63 +18,57 @@ LOC  OBJ            LINE     SOURCE
 
                        5     
 
-0003                   6     delay: ; delay function basically takes 50ms in one call
+0003                   6     delay: 
 
-0003 7AC8              7             mov R2,#200
+0003 E54F              7             mov A,4fh ; This is D
 
-0005                   8         back1:
+0005 75F00A            8             mov B,#10 ; Divides D by 2 and multiplies by 20 to convert into seconds
 
-0005 79FF              9         mov R1,#0FFH
+0008 A4                9             mul AB ; Now A has the total number of times delay must be called
 
-0007                  10         back:
+0009 F8               10             mov r0,A ; Total number of iterations over 50ms stored in A
 
-0007 D9FE             11             djnz R1, back
+000A                  11             delay1:
 
-0009 DAFA             12         djnz R2, back1
+000A 7AC8             12                     mov R2,#200
 
-000B 22               13     ret
+000C                  13                     back1:
 
-                      14     
+000C 79FF             14                             mov R1,#0FFH
 
-0100                  15     org 100h
+000E D9FE             15                             back: djnz R1, back
 
-0100                  16     main:
+0010 DAFA             16                     djnz R2, back1
 
-0100 759000           17             mov p1,#0
+0012 D8F6             17             djnz r0, delay1
 
-0103 754F05           18             mov 4fh,#5
+0014 22               18     ret
 
-0106 E54F             19             mov A,4fh ; This is D
+                      19     
 
-0108 75F002           20             mov B,#2
+0100                  20     org 100h
 
-010B 84               21             div AB
+0100                  21     main:
 
-010C 75F014           22             mov B,#20
+0100 759000           22             mov p1,#0
 
-010F A4               23             mul AB ; Now A has the total number of times delay must be called
+0103 754F05           23             mov 4fh,#5 ; Setting D to some value to check it
 
-0110 D297             24             setb P1.7
+                      24             
 
-0112                  25             blink:
+0106 D297             25             setb P1.7
 
-0112 F8               26                     mov r0,A
+0108                  26             blink:
 
-0113                  27                     delay1:
+0108 1103             27                     acall delay
 
-0113 1103             28                             acall delay
+010A B297             28                     cpl P1.7
 
-0115 D8FC             29                             djnz r0, delay1
+010C 80FA             29             sjmp blink
 
-0117 B297             30                     cpl P1.7
+                      30     end
 
-0119 020112           31                     ljmp blink
-
-                      32             
-
-                      33     end
-
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/05/2017 12:24:04 PAGE     2
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/07/2017 00:17:39 PAGE     2
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -83,11 +77,11 @@ SYMBOL TABLE LISTING
 N A M E             T Y P E  V A L U E   ATTRIBUTES
 
 B. . . . . . . . .  D ADDR   00F0H   A   
-BACK . . . . . . .  C ADDR   0007H   A   
-BACK1. . . . . . .  C ADDR   0005H   A   
-BLINK. . . . . . .  C ADDR   0112H   A   
+BACK . . . . . . .  C ADDR   000EH   A   
+BACK1. . . . . . .  C ADDR   000CH   A   
+BLINK. . . . . . .  C ADDR   0108H   A   
 DELAY. . . . . . .  C ADDR   0003H   A   
-DELAY1 . . . . . .  C ADDR   0113H   A   
+DELAY1 . . . . . .  C ADDR   000AH   A   
 MAIN . . . . . . .  C ADDR   0100H   A   
 P1 . . . . . . . .  D ADDR   0090H   A   
 
