@@ -64,7 +64,7 @@ display:
 		djnz r3,rotate
 		mov p1,A ; p1 is present at 90h and is directly addressable
 		inc r1
-		acall delay
+		acall delay_with_banks
 		djnz r0, loop
 ret
 

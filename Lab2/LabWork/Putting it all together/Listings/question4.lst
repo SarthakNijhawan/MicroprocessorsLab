@@ -1,0 +1,225 @@
+A51 MACRO ASSEMBLER  QUESTION4                                                            08/08/2017 01:56:56 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question4.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE ..\..\Homework\question4.asm SET(SMALL) DEBUG PRINT(.\Listings\question
+                      4.lst) OBJECT(.\Objects\question4.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; display routine for the last 4 bits 
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0003                   5     delay_with_banks:
+
+                       6             using 0
+
+0003 C0D0              7                     push psw
+
+                       8             using 1
+
+0005 75D008            9                     mov psw,#08h
+
+                      10                     
+
+0008 E54F             11             mov A,4fh ; This is D
+
+000A 75F00A           12             mov B,#10 ; Divides D by 2 and multiplies by 20 to convert into seconds
+
+000D A4               13             mul AB ; Now A has the total number of times delay must be called
+
+000E F8               14             mov r0,A ; Total number of iterations over 50ms stored in A
+
+000F                  15             delay2:
+
+000F 7AC8             16                     mov R2,#200
+
+0011                  17                     back2:
+
+0011 79FF             18                             mov R1,#0FFH
+
+0013 D9FE             19                             back3: djnz R1, back3
+
+0015 DAFA             20                     djnz R2, back2
+
+0017 D8F6             21             djnz r0, delay2
+
+                      22                     using 0
+
+0019 D0D0             23                             pop psw
+
+001B 22               24     ret
+
+                      25     
+
+001C                  26     delay: 
+
+                      27             using 0
+
+001C C0D0             28                     push psw
+
+001E C000             29                     push ar0
+
+0020 C001             30                     push ar1
+
+0022 C002             31                     push ar2
+
+                      32             
+
+                      33             using 1
+
+0024 E54F             34             mov A,4fh ; This is D
+
+0026 75F00A           35             mov B,#10 ; Divides D by 2 and multiplies by 20 to convert into seconds
+
+0029 A4               36             mul AB ; Now A has the total number of times delay must be called
+
+002A F8               37             mov r0,A ; Total number of iterations over 50ms stored in A
+
+002B                  38             delay1:
+
+002B 7AC8             39                     mov R2,#200
+
+002D                  40                     back1:
+
+002D 79FF             41                             mov R1,#0FFH
+
+002F D9FE             42                             back: djnz R1, back
+
+0031 DAFA             43                     djnz R2, back1
+
+0033 D8F6             44             djnz r0, delay1
+
+                      45             using 0
+
+0035 D002             46                             pop ar2
+
+0037 D001             47                             pop ar1
+
+0039 D000             48                             pop ar0
+
+003B D0D0             49                             pop psw
+
+003D 22               50     ret
+
+                      51     
+
+003E                  52     display:
+
+003E A850             53             mov r0,50h ; N
+
+0040 A951             54             mov r1,51h ; Ptr
+
+0042 7A0F             55             mov r2,#0fh ; To read the last 4 pins only
+
+                      56             
+
+0044 754F02           57             mov 4fh,#2 ; D=2 to call the delay function
+
+A51 MACRO ASSEMBLER  QUESTION4                                                            08/08/2017 01:56:56 PAGE     2
+
+0047                  58             loop:
+
+0047 E7               59                     mov A,@r1
+
+0048 5A               60                     anl A,r2
+
+0049 7B04             61                     mov r3,#4
+
+004B                  62                     rotate:
+
+004B 03               63                             rr A
+
+004C DBFD             64                     djnz r3,rotate
+
+004E F590             65                     mov p1,A ; p1 is present at 90h and is directly addressable
+
+0050 09               66                     inc r1
+
+0051 1103             67                     acall delay_with_banks
+
+0053 D8F2             68                     djnz r0, loop
+
+0055 22               69     ret
+
+                      70     
+
+0100                  71     org 100h
+
+0100                  72     main:
+
+0100 7581CF           73             mov sp,#0cfh
+
+0103 7980             74             mov r1,#80h
+
+0105                  75             random:
+
+0105 E9               76                     mov A,r1
+
+0106 F7               77                     mov @r1,A
+
+0107 09               78                     inc r1
+
+0108 B988FA           79                     cjne r1, #88h, random
+
+                      80     
+
+010B 755008           81             mov 50h,#8
+
+010E 755180           82             mov 51h,#80h
+
+                      83             
+
+0111 12003E           84             lcall display
+
+                      85             
+
+0114 7590FF           86             mov p1,#0ffh ; Setting all the bits to 0
+
+                      87             
+
+0117 80FE             88     stop: sjmp stop
+
+                      89     end
+
+A51 MACRO ASSEMBLER  QUESTION4                                                            08/08/2017 01:56:56 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+AR2. . . . . . . .  D ADDR   0002H   A   
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   002FH   A   
+BACK1. . . . . . .  C ADDR   002DH   A   
+BACK2. . . . . . .  C ADDR   0011H   A   
+BACK3. . . . . . .  C ADDR   0013H   A   
+DELAY. . . . . . .  C ADDR   001CH   A   
+DELAY1 . . . . . .  C ADDR   002BH   A   
+DELAY2 . . . . . .  C ADDR   000FH   A   
+DELAY_WITH_BANKS .  C ADDR   0003H   A   
+DISPLAY. . . . . .  C ADDR   003EH   A   
+LOOP . . . . . . .  C ADDR   0047H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+RANDOM . . . . . .  C ADDR   0105H   A   
+ROTATE . . . . . .  C ADDR   004BH   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+STOP . . . . . . .  C ADDR   0117H   A   
+
+
+REGISTER BANK(S) USED: 0 1 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

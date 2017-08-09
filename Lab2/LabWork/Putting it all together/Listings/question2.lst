@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/07/2017 05:40:23 PAGE     1
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/08/2017 02:01:26 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
@@ -69,275 +69,277 @@ LOC  OBJ            LINE     SOURCE
 
 0020 5A               30                     anl A,r2
 
-0021 F590             31                     mov 90h,A
+0021 C4               31                     swap A
 
-0023                  32                     delay1:
+0022 F590             32                     mov 90h,A
 
-                      33                             ;lcall delay
+0024                  33                     delay1:
 
-0023 DBFE             34                             djnz r3, delay1
+                      34                             ;lcall delay
 
-0025 D8F5             35                     djnz r0,disploop
+0024 DBFE             35                             djnz r3, delay1
 
-0027 22               36     ret
+0026 D8F4             36                     djnz r0,disploop
 
-                      37     
+0028 22               37     ret
 
-0028                  38     write_lower_nibble: ; Lower nibble in 53h and write location in r0
+                      38     
 
-                      39             using 0
+0029                  39     write_lower_nibble: ; Lower nibble in 53h and write location in r0
 
-0028 C3               40                     clr c
+                      40             using 0
 
-0029 940A             41                     subb A,#0ah
+0029 C3               41                     clr c
 
-002B 4004             42                     jc digit
+002A 940A             42                     subb A,#0ah
 
-002D 2C               43                             add A,r4
+002C 4004             43                     jc digit
 
-002E F6               44                             mov @r0,A
+002E 2C               44                             add A,r4
 
-002F 8004             45                     sjmp comp
+002F F6               45                             mov @r0,A
 
-0031                  46                     digit:
+0030 8004             46                     sjmp comp
 
-0031 E553             47                             mov A,53h
+0032                  47                     digit:
 
-0033 2B               48                             add A,r3
+0032 E553             48                             mov A,53h
 
-0034 F6               49                             mov @r0,A
+0034 2B               49                             add A,r3
 
-0035 00               50                     comp: nop
+0035 F6               50                             mov @r0,A
 
-0036 22               51     ret
+0036 00               51                     comp: nop
 
-                      52     
+0037 22               52     ret
 
-0037                  53     bin2ascii:
+                      53     
 
-0037 AA50             54             mov r2,50h ; N
+0038                  54     bin2ascii:
 
-0039 A951             55             mov r1,51h ; Read pointer
+0038 AA50             55             mov r2,50h ; N
 
-003B A852             56             mov r0,52h ; Write pointer
+003A A951             56             mov r1,51h ; Read pointer
 
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/07/2017 05:40:23 PAGE     2
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/08/2017 02:01:26 PAGE     2
 
-                      57             
+003C A852             57             mov r0,52h ; Write pointer
 
-003D 7B30             58             mov r3,#30h ; Offset for 0
+                      58             
 
-003F 7C61             59             mov r4,#61h ; Offset for a
+003E 7B30             59             mov r3,#30h ; Offset for 0
 
-                      60             
+0040 7C41             60             mov r4,#41h ; Offset for A
 
-0041 7DF0             61             mov r5,#0f0h ; Starts the loop by extracting the lower 4-bits
+                      61             
 
-                      62             
+0042 7DF0             62             mov r5,#0f0h ; Starts the loop by extracting the lower 4-bits
 
-0043                  63             loopb2a:
+                      63             
 
-0043 E7               64                     mov A,@r1
+0044                  64             loopb2a:
 
-0044 5D               65                     anl A,r5 ; higher nibble saved , rest all bits to 0
+0044 E7               65                     mov A,@r1
 
-0045 7E04             66                     mov r6,#4
+0045 5D               66                     anl A,r5 ; higher nibble saved , rest all bits to 0
 
-0047                  67                     rot: ; upper nibble is now in the lower half
+0046 7E04             67                     mov r6,#4
 
-0047 03               68                             rr A
+0048                  68                     rot: ; upper nibble is now in the lower half
 
-0048 DEFD             69                     djnz r6, rot
+0048 03               69                             rr A
 
-004A F553             70                     mov 53h,A
+0049 DEFD             70                     djnz r6, rot
 
-004C 1128             71                     acall write_lower_nibble ; 53 is reserved for its argument parameter
+004B F553             71                     mov 53h,A
 
-004E 08               72                     inc r0
+004D 1129             72                     acall write_lower_nibble ; 53 is reserved for its argument parameter
 
-                      73                     
+004F 08               73                     inc r0
 
-004F ED               74                     mov A,r5
+                      74                     
 
-0050 F4               75                     cpl A
+0050 ED               75                     mov A,r5
 
-0051 57               76                     anl A,@r1 ; Lower order bits recovered
+0051 F4               76                     cpl A
 
-0052 F553             77                     mov 53h,A
+0052 57               77                     anl A,@r1 ; Lower order bits recovered
 
-0054 1128             78                     acall write_lower_nibble
+0053 F553             78                     mov 53h,A
 
-0056 08               79                     inc r0
+0055 1129             79                     acall write_lower_nibble
 
-0057 09               80                     inc r1
+0057 08               80                     inc r0
 
-0058 DAE9             81             djnz r2,loopb2a
+0058 09               81                     inc r1
 
-005A 22               82     ret
+0059 DAE9             82             djnz r2,loopb2a
 
-                      83     
+005B 22               83     ret
 
                       84     
 
-005B                  85     compare: ; Compares 2 operands stored in r0 and r1
+                      85     
 
-005B C3               86             clr c
+005C                  86     compare: ; Compares 2 operands stored in r0 and r1
 
-005C E8               87             mov A,r0
+005C C3               87             clr c
 
-005D 99               88             subb A,r1
+005D E8               88             mov A,r0
 
-005E 22               89     ret
+005E 99               89             subb A,r1
 
-                      90     
+005F 22               90     ret
 
-005F                  91     memcpy:
+                      91     
 
-005F AA50             92             mov r2,50h ; N
+0060                  92     memcpy:
 
-0061 A851             93             mov r0,51h ; Read Pointer
+0060 AA50             93             mov r2,50h ; N
 
-0063 A952             94             mov r1,52h ; Write Pointer
+0062 A851             94             mov r0,51h ; Read Pointer
 
-0065 115B             95             acall compare 
+0064 A952             95             mov r1,52h ; Write Pointer
 
-0067 4009             96             jc skip ; c is zero when Write Ptr < Read Ptr
+0066 115C             96             acall compare 
 
-                      97             ; Code
+0068 4009             97             jc skip ; c is zero when Write Ptr < Read Ptr
 
-0069                  98             loop1:
+                      98             ; Code
 
-0069 E6               99                     mov A,@r0
+006A                  99             loop1:
 
-006A F7              100                     mov @r1,A
+006A E6              100                     mov A,@r0
 
-006B 08              101                     inc r0
+006B F7              101                     mov @r1,A
 
-006C 09              102                     inc r1
+006C 08              102                     inc r0
 
-006D DAFA            103                     djnz r2, loop1
+006D 09              103                     inc r1
 
-006F 020082          104             ljmp completed
+006E DAFA            104                     djnz r2, loop1
 
-0072                 105             skip: ; Write Pointer > Read Pointer
+0070 020083          105             ljmp completed
 
-                     106             ; Code
+0073                 106             skip: ; Write Pointer > Read Pointer
 
-0072 EA              107                     mov A,r2
+                     107             ; Code
 
-0073 29              108                     add A,r1
+0073 EA              108                     mov A,r2
 
-0074 9401            109                     subb A,#1
+0074 29              109                     add A,r1
 
-0076 F9              110                     mov r1,A
+0075 9401            110                     subb A,#1
 
-0077 EA              111                     mov A,r2
+0077 F9              111                     mov r1,A
 
-0078 28              112                     add A,r0
+0078 EA              112                     mov A,r2
 
-0079 9401            113                     subb A,#1
+0079 28              113                     add A,r0
 
-007B F8              114                     mov r0,A
+007A 9401            114                     subb A,#1
 
-007C                 115                     loop2:
+007C F8              115                     mov r0,A
 
-007C E6              116                             mov A,@r0
+007D                 116                     loop2:
 
-007D F7              117                             mov @r1,A
+007D E6              117                             mov A,@r0
 
-007E 18              118                             dec r0
+007E F7              118                             mov @r1,A
 
-007F 19              119                             dec r1
+007F 18              119                             dec r0
 
-0080 DAFA            120                             djnz r2, loop2                  
+0080 19              120                             dec r1
 
-0082 00              121             completed: nop
+0081 DAFA            121                             djnz r2, loop2                  
 
-0083 22              122     ret
+0083 00              122             completed: nop
 
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/07/2017 05:40:23 PAGE     3
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/08/2017 02:01:26 PAGE     3
 
-                     123     
+0084 22              123     ret
 
-                     124     ;;;; Main Program
+                     124     
 
-                     125     
+                     125     ;;;; Main Program
 
-0100                 126     ORG 100H
+                     126     
 
-0100                 127     MAIN:
+0100                 127     ORG 100H
 
-0100 79AC            128     mov r1,#0ach
+0100                 128     MAIN:
 
-0102 7A08            129     mov r2,#8
+0100 79A7            129     mov r1,#0a7h
 
-                     130     
+0102 7A08            130     mov r2,#8
 
-0104                 131     write:
+                     131     
 
-0104 E9              132             mov A,r1
+0104                 132     write:
 
-0105 F7              133             mov @r1,A
+0104 E9              133             mov A,r1
 
-0106 09              134             inc r1
+0105 F7              134             mov @r1,A
 
-0107 DAFB            135     djnz r2, write
+0106 09              135             inc r1
 
-                     136     
+0107 DAFB            136     djnz r2, write
 
-0109 7581CF          137     MOV SP,#0CFH;-----------------------Initialize STACK POINTER
+                     137     
 
-010C 755008          138     MOV 50H,#8;------------------------No of memory locations of Array A
+0109 7581CF          138     MOV SP,#0CFH;-----------------------Initialize STACK POINTER
 
-010F 755180          139     MOV 51H,#80h;------------------------Array A start location
+010C 755008          139     MOV 50H,#8;------------------------No of memory locations of Array A
 
-0112 12000C          140     LCALL zeroOut;----------------------Clear memory
+010F 755180          140     MOV 51H,#80h;------------------------Array A start location
 
-                     141     
+0112 12000C          141     LCALL zeroOut;----------------------Clear memory
 
-0115 755008          142     MOV 50H,#8;------------------------No of memory locations of Array B
+                     142     
 
-0118 755188          143     MOV 51H,#88h;------------------------Array B start location
+0115 755008          143     MOV 50H,#8;------------------------No of memory locations of Array B
 
-011B 12000C          144     LCALL zeroOut;----------------------Clear memory
+0118 755188          144     MOV 51H,#88h;------------------------Array B start location
 
-                     145     
+011B 12000C          145     LCALL zeroOut;----------------------Clear memory
 
-011E 755008          146     MOV 50H,#8;------------------------No of memory locations of source array
+                     146     
 
-0121 7551AC          147     MOV 51H,#0ach;------------------------Source array start location
+011E 755008          147     MOV 50H,#8;------------------------No of memory locations of source array
 
-0124 755280          148     MOV 52H,#80h;------------------------Destination array(A) start location
+0121 7551A7          148     MOV 51H,#0a7h;------------------------Source array start location
 
-0127 120037          149     LCALL bin2ascii;--------------------Write at memory location
+0124 755280          149     MOV 52H,#80h;------------------------Destination array(A) start location
 
-                     150     
+0127 120038          150     LCALL bin2ascii;--------------------Write at memory location
 
-012A 755010          151     MOV 50H,#16;------------------------No of elements of Array A to be copied in Array B
+                     151     
 
-012D 755180          152     MOV 51H,#80h;------------------------Array A start location
+012A 755010          152     MOV 50H,#16;------------------------No of elements of Array A to be copied in Array B
 
-0130 755288          153     MOV 52H,#88h;------------------------Array B start location
+012D 755180          153     MOV 51H,#80h;------------------------Array A start location
 
-0133 12005F          154     LCALL memcpy;-----------------------Copy block of memory to other location
+0130 755288          154     MOV 52H,#88h;------------------------Array B start location
 
-                     155     
+0133 120060          155     LCALL memcpy;-----------------------Copy block of memory to other location
 
-0136 755008          156     MOV 50H,#8;------------------------No of memory locations of Array B
+                     156     
 
-0139 755188          157     MOV 51H,#88h;------------------------Array B start location
+0136 755008          157     MOV 50H,#8;------------------------No of memory locations of Array B
 
-013C 754F05          158     MOV 4FH,#5;------------------------User defined delay value
+0139 755188          158     MOV 51H,#88h;------------------------Array B start location
 
-013F 120016          159     LCALL display;----------------------Display the last four bits of elements on LEDs
+013C 754F05          159     MOV 4FH,#5;------------------------User defined delay value
 
-                     160     
+013F 120016          160     LCALL display;----------------------Display the last four bits of elements on LEDs
 
-0142 80FE            161     here:SJMP here;---------------------WHILE loop(Infinite Loop)
+                     161     
 
-                     162     END
+0142 80FE            162     here:SJMP here;---------------------WHILE loop(Infinite Loop)
 
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/07/2017 05:40:23 PAGE     4
+                     163     END
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/08/2017 02:01:26 PAGE     4
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -347,27 +349,27 @@ N A M E             T Y P E  V A L U E   ATTRIBUTES
 
 BACK . . . . . . .  C ADDR   0007H   A   
 BACK1. . . . . . .  C ADDR   0005H   A   
-BIN2ASCII. . . . .  C ADDR   0037H   A   
-COMP . . . . . . .  C ADDR   0035H   A   
-COMPARE. . . . . .  C ADDR   005BH   A   
-COMPLETED. . . . .  C ADDR   0082H   A   
+BIN2ASCII. . . . .  C ADDR   0038H   A   
+COMP . . . . . . .  C ADDR   0036H   A   
+COMPARE. . . . . .  C ADDR   005CH   A   
+COMPLETED. . . . .  C ADDR   0083H   A   
 DELAY. . . . . . .  C ADDR   0003H   A   
-DELAY1 . . . . . .  C ADDR   0023H   A   
-DIGIT. . . . . . .  C ADDR   0031H   A   
+DELAY1 . . . . . .  C ADDR   0024H   A   
+DIGIT. . . . . . .  C ADDR   0032H   A   
 DISPLAY. . . . . .  C ADDR   0016H   A   
 DISPLOOP . . . . .  C ADDR   001CH   A   
 HERE . . . . . . .  C ADDR   0142H   A   
 LOOP . . . . . . .  C ADDR   0010H   A   
-LOOP1. . . . . . .  C ADDR   0069H   A   
-LOOP2. . . . . . .  C ADDR   007CH   A   
-LOOPB2A. . . . . .  C ADDR   0043H   A   
+LOOP1. . . . . . .  C ADDR   006AH   A   
+LOOP2. . . . . . .  C ADDR   007DH   A   
+LOOPB2A. . . . . .  C ADDR   0044H   A   
 MAIN . . . . . . .  C ADDR   0100H   A   
-MEMCPY . . . . . .  C ADDR   005FH   A   
-ROT. . . . . . . .  C ADDR   0047H   A   
-SKIP . . . . . . .  C ADDR   0072H   A   
+MEMCPY . . . . . .  C ADDR   0060H   A   
+ROT. . . . . . . .  C ADDR   0048H   A   
+SKIP . . . . . . .  C ADDR   0073H   A   
 SP . . . . . . . .  D ADDR   0081H   A   
 WRITE. . . . . . .  C ADDR   0104H   A   
-WRITE_LOWER_NIBBLE  C ADDR   0028H   A   
+WRITE_LOWER_NIBBLE  C ADDR   0029H   A   
 ZEROOUT. . . . . .  C ADDR   000CH   A   
 
 

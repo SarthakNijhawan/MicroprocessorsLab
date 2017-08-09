@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  MEMCPY                                                               08/07/2017 05:42:32 PAGE     1
+A51 MACRO ASSEMBLER  MEMCPY                                                               08/08/2017 01:44:20 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
@@ -98,7 +98,7 @@ LOC  OBJ            LINE     SOURCE
 
 0100                  45     main:
 
-0100 7980             46     mov r1,#80h
+0100 7985             46     mov r1,#85h
 
 0102                  47             random:
 
@@ -108,25 +108,25 @@ LOC  OBJ            LINE     SOURCE
 
 0104 09               50                     inc r1
 
-0105 B988FA           51                     cjne r1, #88h, random
+0105 B98CFA           51                     cjne r1, #8ch, random
 
                       52                     
 
-0108 755008           53             mov 50h,#8
+0108 755007           53             mov 50h,#7
 
-010B 755180           54             mov 51h,#80h
+010B 755185           54             mov 51h,#85h
 
-010E 755285           55             mov 52h,#85h
+010E 755280           55             mov 52h,#80h
 
 0111 1107             56             acall memcpy
 
 0113 80FE             57             stop: sjmp stop
 
-A51 MACRO ASSEMBLER  MEMCPY                                                               08/07/2017 05:42:32 PAGE     2
+A51 MACRO ASSEMBLER  MEMCPY                                                               08/08/2017 01:44:20 PAGE     2
 
                       58     end
 
-A51 MACRO ASSEMBLER  MEMCPY                                                               08/07/2017 05:42:32 PAGE     3
+A51 MACRO ASSEMBLER  MEMCPY                                                               08/08/2017 01:44:20 PAGE     3
 
 SYMBOL TABLE LISTING
 ------ ----- -------

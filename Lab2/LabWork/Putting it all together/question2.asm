@@ -28,6 +28,7 @@ display:
 		mov A,@r1
 		inc r1
 		anl A,r2
+		swap A
 		mov 90h,A
 		delay1:
 			;lcall delay
@@ -56,7 +57,7 @@ bin2ascii:
 	mov r0,52h ; Write pointer
 	
 	mov r3,#30h ; Offset for 0
-	mov r4,#61h ; Offset for a
+	mov r4,#41h ; Offset for A
 	
 	mov r5,#0f0h ; Starts the loop by extracting the lower 4-bits
 	
@@ -125,7 +126,7 @@ ret
 
 ORG 100H
 MAIN:
-mov r1,#0ach
+mov r1,#0a7h
 mov r2,#8
 
 write:
@@ -144,7 +145,7 @@ MOV 51H,#88h;------------------------Array B start location
 LCALL zeroOut;----------------------Clear memory
 
 MOV 50H,#8;------------------------No of memory locations of source array
-MOV 51H,#0ach;------------------------Source array start location
+MOV 51H,#0a7h;------------------------Source array start location
 MOV 52H,#80h;------------------------Destination array(A) start location
 LCALL bin2ascii;--------------------Write at memory location
 
