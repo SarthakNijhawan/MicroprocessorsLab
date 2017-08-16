@@ -23,7 +23,10 @@ ret
 readNibble:
 	
 loop:
-	mov P1,#0F0H	;turn on all 4 LEDs (routine is ready to accept input from the user)
+	setb P1.4		;turn on all 4 LEDs (routine is ready to accept input from the user)
+	setb P1.5
+	setb P1.6
+	setb P1.7
 	mov 4FH,#10		;wait for 5 sec during which user can give input through switches
 	acall delay
 	anl P1,#0FH		;turn off all LEDS
