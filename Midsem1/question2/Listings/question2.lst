@@ -1,0 +1,89 @@
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/19/2017 06:15:26 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question2.asm SET(SMALL) DEBUG PRINT(.\Listings\question2.lst) OBJECT(.
+                      \Objects\question2.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;GCD of two numbers
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0003                   5     gcd: ;Input at 60h and 61h and outputs the GCD at 62h
+
+0003 E560              6             mov A,60H
+
+0005 8561F0            7             mov B,61H
+
+0008 C3                8             clr C
+
+0009 95F0              9             subb A,B
+
+000B 5004             10             jnc loop
+
+000D E560             11             mov A,60H
+
+000F C5F0             12             xch A,B
+
+0011                  13             loop:
+
+0011 C3               14                     clr C
+
+0012 95F0             15                     subb A,B
+
+0014 A8F0             16                     mov R0,B
+
+0016 84               17                     div AB
+
+0017 E8               18                     mov A,R0
+
+0018 A8F0             19                     mov R0,B
+
+001A B800F4           20                     cjne R0,#0,loop
+
+001D F562             21                     mov 62H,A
+
+001F 22               22     ret
+
+                      23     
+
+0100                  24     org 100h
+
+0100                  25     main:
+
+                      26             ;mov 60h,#25
+
+                      27             ;mov 61h,#10
+
+0100 1103             28             acall gcd
+
+0102 80FE             29             here: sjmp here
+
+                      30     end
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/19/2017 06:15:26 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+GCD. . . . . . . .  C ADDR   0003H   A   
+HERE . . . . . . .  C ADDR   0102H   A   
+LOOP . . . . . . .  C ADDR   0011H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

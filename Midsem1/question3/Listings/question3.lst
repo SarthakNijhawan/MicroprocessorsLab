@@ -1,0 +1,124 @@
+A51 MACRO ASSEMBLER  QUESTION3                                                            08/19/2017 06:21:04 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question3.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question3.asm SET(SMALL) DEBUG PRINT(.\Listings\question3.lst) OBJECT(.
+                      \Objects\question3.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+0000                   1     org 0h
+
+0000 020100            2     ljmp main
+
+                       3     
+
+0003                   4     delay:
+
+0003 C0D0              5                     push psw
+
+0005 75D008            6                     mov psw,#08H
+
+0008 7AD0              7                     mov R2,#208D
+
+000A                   8                     back1:
+
+000A 79FF              9                             mov R1,#0FFH
+
+000C D9FE             10                             back: djnz R1, back
+
+000E DAFA             11                     djnz R2, back1
+
+0010 D0D0             12                     pop psw
+
+0012 22               13     ret
+
+                      14     
+
+0013                  15     wave:
+
+0013 7908             16             mov R1,#8
+
+0015 7400             17             mov A,#0
+
+0017 759000           18             mov P1,#00H
+
+                      19             ;acall delay
+
+001A                  20             loop:
+
+001A F8               21                     mov r0,A
+
+001B 7404             22                     mov A,#4
+
+001D C3               23                     clr c
+
+001E 99               24                     subb A,r1
+
+001F E8               25                     mov A,r0
+
+0020 5004             26                     jnc subn
+
+0022                  27             addn:
+
+0022 2432             28                     add A,#50
+
+0024 8003             29                     sjmp check
+
+0026                  30             subn:
+
+0026 C3               31                     clr c
+
+0027 9432             32                     subb A,#50
+
+0029                  33             check:
+
+0029 F590             34                     mov P1,A
+
+002B 1103             35                     acall delay
+
+002D D9EB             36                     djnz R1,loop
+
+002F 22               37     ret
+
+                      38     
+
+0100                  39     org 100H
+
+0100                  40     main:
+
+0100 759000           41             mov P1,#00H
+
+0103 1113             42             acall wave
+
+0105 80FE             43             stop: sjmp stop
+
+                      44     end
+
+A51 MACRO ASSEMBLER  QUESTION3                                                            08/19/2017 06:21:04 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+ADDN . . . . . . .  C ADDR   0022H   A   
+BACK . . . . . . .  C ADDR   000CH   A   
+BACK1. . . . . . .  C ADDR   000AH   A   
+CHECK. . . . . . .  C ADDR   0029H   A   
+DELAY. . . . . . .  C ADDR   0003H   A   
+LOOP . . . . . . .  C ADDR   001AH   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+STOP . . . . . . .  C ADDR   0105H   A   
+SUBN . . . . . . .  C ADDR   0026H   A   
+WAVE . . . . . . .  C ADDR   0013H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
