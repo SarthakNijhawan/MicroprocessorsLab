@@ -29,7 +29,7 @@ display:
 		inc r1
 		anl A,r2
 		swap A
-		mov 90h,A
+		mov P1,A
 		delay1:
 			;lcall delay
 			djnz r3, delay1

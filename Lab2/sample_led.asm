@@ -1,7 +1,7 @@
 ;---------------------------------------------------------------
 ;PROBLEM STATEMENT: BLINKING LEDS OF PORT0
 ;PURPOSE: 1. GOOD CODING STYLES 
-;	  2. USING PUSH, POP INSTRUCTIONS IN SUBROUTINES
+;	  	2. USING PUSH, POP INSTRUCTIONS IN SUBROUTINES
 ;---------------------------------------------------------------
 
 	LED EQU P0
