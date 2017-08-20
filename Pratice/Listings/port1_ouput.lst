@@ -1,0 +1,42 @@
+A51 MACRO ASSEMBLER  PORT1_OUPUT                                                          08/19/2017 02:05:50 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\port1_ouput.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE port1_ouput.asm SET(SMALL) DEBUG PRINT(.\Listings\port1_ouput.lst) OBJE
+                      CT(.\Objects\port1_ouput.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Port1 as output
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0100                   5     org 100h
+
+0100                   6     main:
+
+0100 E590              7             mov A,P1
+
+                       8     end
+
+A51 MACRO ASSEMBLER  PORT1_OUPUT                                                          08/19/2017 02:05:50 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

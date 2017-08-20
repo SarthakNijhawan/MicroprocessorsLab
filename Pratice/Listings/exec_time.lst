@@ -1,0 +1,174 @@
+A51 MACRO ASSEMBLER  EXEC_TIME                                                            08/19/2017 00:49:58 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\exec_time.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE exec_time.asm SET(SMALL) DEBUG PRINT(.\Listings\exec_time.lst) OBJECT(.
+                      \Objects\exec_time.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Measures the execution time of a program and stores it in r0 and r1
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0003                   5     compare: ; Compares 2 operands stored in r0 and r1
+
+0003 C3                6             clr c
+
+0004 E8                7             mov A,r0
+
+0005 99                8             subb A,r1
+
+0006 22                9     ret
+
+                      10     
+
+0007                  11     memcpy:
+
+0007 AA50             12             mov r2,50h ; N
+
+0009 A851             13             mov r0,51h ; Read Pointer
+
+000B A952             14             mov r1,52h ; Write Pointer
+
+000D 1103             15             acall compare 
+
+000F 4009             16             jc skip ; c is zero when Write Ptr < Read Ptr
+
+                      17             ; Code
+
+0011                  18             loop1:
+
+0011 E6               19                     mov A,@r0
+
+0012 F7               20                     mov @r1,A
+
+0013 08               21                     inc r0
+
+0014 09               22                     inc r1
+
+0015 DAFA             23                     djnz r2, loop1
+
+0017 02002A           24             ljmp completed
+
+001A                  25             skip: ; Write Pointer > Read Pointer
+
+                      26             ; Code
+
+001A EA               27                     mov A,r2
+
+001B 29               28                     add A,r1
+
+001C 9401             29                     subb A,#1
+
+001E F9               30                     mov r1,A
+
+001F EA               31                     mov A,r2
+
+0020 28               32                     add A,r0
+
+0021 9401             33                     subb A,#1
+
+0023 F8               34                     mov r0,A
+
+0024                  35                     loop2:
+
+0024 E6               36                             mov A,@r0
+
+0025 F7               37                             mov @r1,A
+
+0026 18               38                             dec r0
+
+0027 19               39                             dec r1
+
+0028 DAFA             40                             djnz r2, loop2                  
+
+002A 00               41             completed: nop
+
+002B 22               42     ret
+
+                      43     
+
+0100                  44     org 100H
+
+0100                  45     main:
+
+0100 7985             46             mov r1,#85h
+
+0102                  47             random:
+
+0102 E9               48                     mov A,r1
+
+0103 F7               49                     mov @r1,A
+
+0104 09               50                     inc r1
+
+0105 B98CFA           51                     cjne r1, #8ch, random
+
+                      52                     
+
+0108 755007           53             mov 50h,#7
+
+010B 755185           54             mov 51h,#85h
+
+010E 755280           55             mov 52h,#80h
+
+0111 758901           56             mov tmod,#01h
+
+0114 C28D             57             clr tf0
+
+A51 MACRO ASSEMBLER  EXEC_TIME                                                            08/19/2017 00:49:58 PAGE     2
+
+0116 D28C             58             setb tr0
+
+0118 1107             59             acall memcpy
+
+011A C28C             60             clr tr0
+
+011C 7800             61             mov r0,#0
+
+011E 7900             62             mov r1,#0
+
+0120 A88C             63             mov r0,th0
+
+0122 A98A             64             mov r1,tl0
+
+                      65             
+
+0124 80FE             66             stop: sjmp stop
+
+                      67     end
+
+A51 MACRO ASSEMBLER  EXEC_TIME                                                            08/19/2017 00:49:58 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+COMPARE. . . . . .  C ADDR   0003H   A   
+COMPLETED. . . . .  C ADDR   002AH   A   
+LOOP1. . . . . . .  C ADDR   0011H   A   
+LOOP2. . . . . . .  C ADDR   0024H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+MEMCPY . . . . . .  C ADDR   0007H   A   
+RANDOM . . . . . .  C ADDR   0102H   A   
+SKIP . . . . . . .  C ADDR   001AH   A   
+STOP . . . . . . .  C ADDR   0124H   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

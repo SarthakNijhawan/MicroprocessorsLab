@@ -1,0 +1,3 @@
+".\Objects\port1_input.obj" 
+TO ".\Objects\practise" 
+PRINT(".\Listings\practise.m51") RAMSIZE(256) 

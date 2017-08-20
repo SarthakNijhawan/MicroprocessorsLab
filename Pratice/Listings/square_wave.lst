@@ -1,0 +1,90 @@
+A51 MACRO ASSEMBLER  SQUARE_WAVE                                                          08/19/2017 00:39:11 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\square_wave.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE square_wave.asm SET(SMALL) DEBUG PRINT(.\Listings\square_wave.lst) OBJE
+                      CT(.\Objects\square_wave.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Square Wave generator
+
+0000                   2     ORG 0H
+
+0000 020100            3     LJMP MAIN
+
+                       4     
+
+  0090                 5     PIN EQU P1.0
+
+                       6     
+
+0003                   7     SQUARE_WAVE:                                    ;Using timer 0 in mode 1
+
+0003 758901            8             MOV TMOD,#01H
+
+0006 D290              9             SETB PIN        
+
+0008                  10             LOOP:
+
+0008 85508C           11                     MOV TH0,50H                             ;Load the values in the registers
+
+000B 85518A           12                     MOV TL0,51H                             
+
+000E B290             13                     CPL P1.0
+
+0010 D28C             14                     SETB TR0                                ;Start the timer
+
+0012 308DFD           15                     DELAY: JNB TF0,DELAY
+
+0015 C28D             16                     CLR TF0
+
+0017 C28C             17                     CLR TR0
+
+0019 80ED             18                     SJMP LOOP
+
+001B 22               19     RET
+
+                      20     
+
+0100                  21     ORG 100H
+
+0100                  22     MAIN:
+
+0100 7581C7           23             MOV SP,#0C7H
+
+0103 850050           24             MOV 50H,00H                             ;Using timer in full mode
+
+0106 850051           25             MOV     51H,00H
+
+0109 1103             26             ACALL SQUARE_WAVE
+
+                      27     END
+
+A51 MACRO ASSEMBLER  SQUARE_WAVE                                                          08/19/2017 00:39:11 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY. . . . . . .  C ADDR   0012H   A   
+LOOP . . . . . . .  C ADDR   0008H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+PIN. . . . . . . .  B ADDR   0090H.0 A   
+SP . . . . . . . .  D ADDR   0081H   A   
+SQUARE_WAVE. . . .  C ADDR   0003H   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

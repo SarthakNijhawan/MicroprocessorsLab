@@ -1,0 +1,118 @@
+A51 MACRO ASSEMBLER  PORT1_INPUT                                                          08/20/2017 04:21:19 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\port1_input.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE port1_input.asm SET(SMALL) DEBUG PRINT(.\Listings\port1_input.lst) OBJE
+                      CT(.\Objects\port1_input.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Port1 as input
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0003                   5     delay: 
+
+0003 E54F              6             mov A,4fh ; This is D
+
+0005 75F014            7             mov B,#20 ;     multiplies by 20 to convert into seconds
+
+0008 A4                8             mul AB ; Now A has the total number of times delay must be called
+
+0009 F8                9             mov r0,A ; Total number of iterations over 50ms stored in A
+
+000A                  10             delay1:
+
+000A 7AC8             11                     mov R2,#200
+
+000C                  12                     back1:
+
+000C 79FF             13                             mov R1,#0FFH
+
+000E D9FE             14                             back: djnz R1, back
+
+0010 DAFA             15                     djnz R2, back1
+
+0012 D8F6             16             djnz r0, delay1
+
+0014 22               17     ret
+
+                      18     
+
+                      19     
+
+0015                  20     directly_from_port:
+
+0015                  21             loop:
+
+0015 7590FF           22                     mov P1,#0FFH
+
+0018 754F05           23                     mov 4FH,#5D
+
+001B 1103             24                     acall delay
+
+001D E590             25                     mov A,P1
+
+001F 540F             26                     anl A,#0FH
+
+0021 C4               27                     swap A
+
+0022 53900F           28                     anl P1,#0FH
+
+0025 4290             29                     orl P1,A
+
+0027 754F05           30                     mov 4FH,#5D
+
+002A 1103             31                     acall delay
+
+002C 80E7             32                     sjmp loop
+
+002E 22               33     ret
+
+                      34     
+
+002F                  35     indirectly_from_port:
+
+                      36             
+
+002F 22               37     ret
+
+                      38     
+
+0100                  39     org 100h
+
+0100                  40     main:
+
+0100 1115             41             acall directly_from_port
+
+                      42     end
+
+A51 MACRO ASSEMBLER  PORT1_INPUT                                                          08/20/2017 04:21:19 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E               T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . . .  C ADDR   000EH   A   
+BACK1. . . . . . . .  C ADDR   000CH   A   
+DELAY. . . . . . . .  C ADDR   0003H   A   
+DELAY1 . . . . . . .  C ADDR   000AH   A   
+DIRECTLY_FROM_PORT .  C ADDR   0015H   A   
+INDIRECTLY_FROM_PORT  C ADDR   002FH   A   
+LOOP . . . . . . . .  C ADDR   0015H   A   
+MAIN . . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . . .  D ADDR   0090H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

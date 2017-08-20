@@ -1,0 +1,78 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        08/20/2017  04:22:03  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\port1_input.obj TO .\Objects\practise PRINT (.\Listings\practise.m51) RAMSIZE (256
+>> )
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\port1_input.obj (PORT1_INPUT)
+
+
+LINK MAP OF MODULE:  .\Objects\practise (PORT1_INPUT)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0102H     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\practise (PORT1_INPUT)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        PORT1_INPUT
+  D:00F0H         SYMBOL        B
+  C:000EH         SYMBOL        BACK
+  C:000CH         SYMBOL        BACK1
+  C:0003H         SYMBOL        DELAY
+  C:000AH         SYMBOL        DELAY1
+  C:0015H         SYMBOL        DIRECTLY_FROM_PORT
+  C:002FH         SYMBOL        INDIRECTLY_FROM_PORT
+  C:0015H         SYMBOL        LOOP
+  C:0100H         SYMBOL        MAIN
+  D:0090H         SYMBOL        P1
+  C:0000H         LINE#         3
+  C:0003H         LINE#         6
+  C:0005H         LINE#         7
+  C:0008H         LINE#         8
+  C:0009H         LINE#         9
+  C:000AH         LINE#         11
+  C:000CH         LINE#         13
+  C:000EH         LINE#         14
+  C:0010H         LINE#         15
+  C:0012H         LINE#         16
+  C:0014H         LINE#         17
+  C:0015H         LINE#         22
+  C:0018H         LINE#         23
+  C:001BH         LINE#         24
+  C:001DH         LINE#         25
+  C:001FH         LINE#         26
+  C:0021H         LINE#         27
+  C:0022H         LINE#         28
+  C:0025H         LINE#         29
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/20/2017  04:22:03  PAGE 2
+
+
+  C:0027H         LINE#         30
+  C:002AH         LINE#         31
+  C:002CH         LINE#         32
+  C:002EH         LINE#         33
+  C:002FH         LINE#         37
+  C:0100H         LINE#         41
+  -------         ENDMOD        PORT1_INPUT
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0032H BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=258
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
