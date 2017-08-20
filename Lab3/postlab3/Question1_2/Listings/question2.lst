@@ -1,0 +1,147 @@
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/20/2017 09:30:43 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question2.asm SET(SMALL) DEBUG PRINT(.\Listings\question2.lst) OBJECT(.
+                      \Objects\question2.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;; Assembly program to read a nibble from the slider swithches and dislplay on the LEDs
+
+0000                   2     org 0H
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0003                   5     delay:                          ;This routine takes input from 4FH location
+
+0003 C0D0              6             push psw
+
+0005 75D008            7             mov psw,#08H
+
+                       8             using 1
+
+0008 E54F              9             mov A,4FH               ;This is D
+
+000A 75F014           10             mov B,#20               ;Divides D by 2 and multiplies by 20 to convert into second
+                             s
+
+000D A4               11             mul AB                  ;Now A has the total number of times delay must be called
+
+000E F8               12             mov r0,A                ;Total number of iterations over 50ms stored in A
+
+000F                  13             delay1:
+
+000F 7AC8             14                     mov R2,#200
+
+0011                  15                     back1:
+
+0011 79FF             16                             mov R1,#0FFH
+
+0013 D9FE             17                             back: djnz R1, back
+
+0015 DAFA             18                     djnz R2, back1
+
+0017 D8F6             19             djnz r0, delay1
+
+0019 D0D0             20             pop psw
+
+001B 22               21     ret
+
+                      22     
+
+001C                  23     readNibble:
+
+                      24             using 0
+
+001C 754F05           25             mov 4FH,#5D     
+
+001F 7800             26             mov R0,#0
+
+0021                  27             loop:
+
+0021 884E             28                     mov 4EH,R0
+
+0023 7590FF           29                     mov P1,#0FFH
+
+0026 1103             30                     acall delay
+
+0028 53900F           31                     anl P1,#0FH
+
+002B E590             32                     mov A,P1
+
+002D F8               33                     mov R0,A
+
+002E C4               34                     swap A
+
+002F 4290             35                     orl P1,A
+
+0031 1103             36                     acall delay
+
+0033 B80FEB           37                     cjne R0,#0FH,loop
+
+                      38                     
+
+0036 E54E             39                     mov A,4EH
+
+0038 C4               40                     swap A
+
+0039 F590             41                     mov P1,A
+
+003B 1103             42                     acall delay
+
+003D 759000           43                     mov P1,#00H
+
+0040 22               44     ret
+
+                      45     
+
+                      46     
+
+                      47     ;; =============================================
+
+                      48     ;;                              Main Function
+
+                      49     ;; =============================================
+
+0100                  50     org 100h
+
+0100                  51     main:
+
+0100 7581CF           52             mov SP,#0CFH    ;Initialising the pointer
+
+0103 111C             53             acall readNibble
+
+0105 80FE             54     here: sjmp here
+
+                      55     end
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/20/2017 09:30:43 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   0013H   A   
+BACK1. . . . . . .  C ADDR   0011H   A   
+DELAY. . . . . . .  C ADDR   0003H   A   
+DELAY1 . . . . . .  C ADDR   000FH   A   
+HERE . . . . . . .  C ADDR   0105H   A   
+LOOP . . . . . . .  C ADDR   0021H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+READNIBBLE . . . .  C ADDR   001CH   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+
+
+REGISTER BANK(S) USED: 0 1 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

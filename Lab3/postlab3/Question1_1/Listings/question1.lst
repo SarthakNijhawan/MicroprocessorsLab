@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  QUESTION1                                                            08/15/2017 09:49:54 PAGE     1
+A51 MACRO ASSEMBLER  QUESTION1                                                            08/20/2017 08:54:24 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
@@ -20,13 +20,16 @@ LOC  OBJ            LINE     SOURCE
 
 0003                   6     delay: 
 
-0003 E54F              7             mov A,4fh ; This is D
+0003 E54F              7             mov A,4fh                               ; This is D
 
-0005 75F00A            8             mov B,#10 ; Divides D by 2 and multiplies by 20 to convert into seconds
+0005 75F00A            8             mov B,#10                               ; Divides by 2 and multiplies by 20 to conv
+                             ert into seconds
 
-0008 A4                9             mul AB ; Now A has the total number of times delay must be called
+0008 A4                9             mul AB                                  ; Now A has the total number of times delay
+                              must be called
 
-0009 F8               10             mov r0,A ; Total number of iterations over 50ms stored in A
+0009 F8               10             mov r0,A                                ; Total number of iterations over 50ms stor
+                             ed in A
 
 000A                  11             delay1:
 
@@ -50,25 +53,21 @@ LOC  OBJ            LINE     SOURCE
 
 0100                  21     main:
 
-0100 759000           22             mov p1,#0
+0100 C297             22             clr p1.7
 
-0103 754F01           23             mov 4fh,#1 ; Setting D to some value to check it
+0102 754F0A           23             mov 4fh,#10D
 
-                      24             
+0105                  24             blink:
 
-0106 D297             25             setb P1.7
+0105 1103             25                     acall delay
 
-0108                  26             blink:
+0107 B297             26                     cpl p1.7
 
-0108 1103             27                     acall delay
+0109 80FA             27                     sjmp blink
 
-010A B297             28                     cpl P1.7
+                      28     end
 
-010C 80FA             29             sjmp blink
-
-                      30     end
-
-A51 MACRO ASSEMBLER  QUESTION1                                                            08/15/2017 09:49:54 PAGE     2
+A51 MACRO ASSEMBLER  QUESTION1                                                            08/20/2017 08:54:24 PAGE     2
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -79,7 +78,7 @@ N A M E             T Y P E  V A L U E   ATTRIBUTES
 B. . . . . . . . .  D ADDR   00F0H   A   
 BACK . . . . . . .  C ADDR   000EH   A   
 BACK1. . . . . . .  C ADDR   000CH   A   
-BLINK. . . . . . .  C ADDR   0108H   A   
+BLINK. . . . . . .  C ADDR   0105H   A   
 DELAY. . . . . . .  C ADDR   0003H   A   
 DELAY1 . . . . . .  C ADDR   000AH   A   
 MAIN . . . . . . .  C ADDR   0100H   A   
