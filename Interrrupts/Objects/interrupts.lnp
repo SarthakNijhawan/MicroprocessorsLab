@@ -1,0 +1,3 @@
+".\Objects\finger_print_scanner.obj" 
+TO ".\Objects\interrupts" 
+PRINT(".\Listings\interrupts.m51") RAMSIZE(256) 

@@ -1,0 +1,83 @@
+BL51 BANKED LINKER/LOCATER V6.22                                                        08/20/2017  08:37:08  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
+C:\KEIL_V5\C51\BIN\BL51.EXE .\Objects\finger_print_scanner.obj TO .\Objects\interrupts PRINT (.\Listings\interrupts.m51)
+>>  RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\finger_print_scanner.obj (FINGER_PRINT_SCANNER)
+
+
+LINK MAP OF MODULE:  .\Objects\interrupts (FINGER_PRINT_SCANNER)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     021BH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\interrupts (FINGER_PRINT_SCANNER)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        FINGER_PRINT_SCANNER
+  C:0100H         SYMBOL        DELAY
+  C:0105H         SYMBOL        HERE
+  D:00A8H         SYMBOL        IE
+  C:0207H         SYMBOL        LOOP
+  C:0109H         SYMBOL        MAIN
+  C:0211H         SYMBOL        MATCH
+  D:0080H         SYMBOL        P0
+  D:0090H         SYMBOL        P1
+  C:0200H         SYMBOL        SCAN
+  C:0110H         SYMBOL        STOP
+  D:0088H         SYMBOL        TCON
+  C:021AH         SYMBOL        TERM
+  B:0088H.5       SYMBOL        TF0
+  D:0089H         SYMBOL        TMOD
+  B:0088H.4       SYMBOL        TR0
+  C:0000H         LINE#         3
+  C:0003H         LINE#         6
+  C:0200H         LINE#         10
+  C:0202H         LINE#         11
+  C:0204H         LINE#         12
+  C:0207H         LINE#         14
+  C:0208H         LINE#         15
+  C:0209H         LINE#         16
+  C:020AH         LINE#         17
+  C:020BH         LINE#         18
+  C:020DH         LINE#         19
+  C:020FH         LINE#         20
+  C:0211H         LINE#         22
+  C:0213H         LINE#         23
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/20/2017  08:37:08  PAGE 2
+
+
+  C:0216H         LINE#         24
+  C:0218H         LINE#         25
+  C:021AH         LINE#         26
+  C:0100H         LINE#         30
+  C:0103H         LINE#         31
+  C:0105H         LINE#         32
+  C:0108H         LINE#         33
+  C:0109H         LINE#         36
+  C:010CH         LINE#         37
+  C:010EH         LINE#         38
+  C:0110H         LINE#         39
+  -------         ENDMOD        FINGER_PRINT_SCANNER
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0033H BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=539
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,121 @@
+A51 MACRO ASSEMBLER  FINGER_PRINT_SCANNER                                                 08/20/2017 08:37:08 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\finger_print_scanner.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE finger_print_scanner.asm SET(SMALL) DEBUG PRINT(.\Listings\finger_print
+                      _scanner.lst) OBJECT(.\Objects\finger_print_scanner.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Finger print Scanner with all the data stored in the ROM
+
+0000                   2     ORG 00h
+
+0000 020109            3     LJMP MAIN
+
+                       4     
+
+0003                   5     ORG 03H
+
+0003 020200            6     LJMP SCAN
+
+                       7     
+
+0200                   8     ORG 200H
+
+0200                   9     SCAN:
+
+0200 A890             10             MOV R0,P1
+
+0202 7928             11             MOV R1,#40                      ;Total number of students
+
+0204 903000           12             MOV DPTR,#3000H
+
+0207                  13             LOOP:
+
+0207 E4               14                     CLR A
+
+0208 93               15                     MOVC A,@A+DPTR
+
+0209 C3               16                     CLR C
+
+020A 98               17                     SUBB A,R0
+
+020B 6004             18                     JZ MATCH
+
+020D D9F8             19                     DJNZ R1,LOOP
+
+020F 8009             20                     SJMP TERM
+
+0211                  21                     MATCH:
+
+0211 D280             22                             SETB P0.0
+
+0213 754F05           23                             MOV 4FH,#5D
+
+0216 3100             24                             ACALL DELAY
+
+0218 C280             25                             CLR P0.0
+
+021A 32               26     TERM:RETI
+
+                      27     
+
+0100                  28     ORG 100H
+
+0100                  29     DELAY:
+
+0100 758901           30             MOV TMOD,#01H
+
+0103 D28C             31             SETB TR0
+
+0105 308DFD           32             HERE: JNB TF0,HERE
+
+0108 22               33     RET
+
+                      34     
+
+0109                  35     MAIN:
+
+0109 75A881           36             MOV IE,#81H                             ;Using the external interrupt 0
+
+010C D289             37             SETB TCON.1                             ;Setting the incoming as edge triggered
+
+010E C280             38             CLR P0.0
+
+0110 80FE             39             STOP: SJMP STOP
+
+                      40     END
+
+                             
+
+A51 MACRO ASSEMBLER  FINGER_PRINT_SCANNER                                                 08/20/2017 08:37:08 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+DELAY. . . . . . .  C ADDR   0100H   A   
+HERE . . . . . . .  C ADDR   0105H   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+LOOP . . . . . . .  C ADDR   0207H   A   
+MAIN . . . . . . .  C ADDR   0109H   A   
+MATCH. . . . . . .  C ADDR   0211H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+SCAN . . . . . . .  C ADDR   0200H   A   
+STOP . . . . . . .  C ADDR   0110H   A   
+TCON . . . . . . .  D ADDR   0088H   A   
+TERM . . . . . . .  C ADDR   021AH   A   
+TF0. . . . . . . .  B ADDR   0088H.5 A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
