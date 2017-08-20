@@ -1,0 +1,1 @@
+"readNibble.asm" SET (SMALL) DEBUG PRINT(.\Listings\readNibble.lst) OBJECT(.\Objects\readNibble.obj) EP

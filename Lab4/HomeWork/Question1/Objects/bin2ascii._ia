@@ -1,0 +1,1 @@
+"bin2ascii.asm" SET (SMALL) DEBUG PRINT(.\Listings\bin2ascii.lst) OBJECT(.\Objects\bin2ascii.obj) EP

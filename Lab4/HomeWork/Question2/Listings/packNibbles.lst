@@ -1,0 +1,165 @@
+A51 MACRO ASSEMBLER  PACKNIBBLES                                                          08/20/2017 10:27:23 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\packNibbles.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE packNibbles.asm SET(SMALL) DEBUG PRINT(.\Listings\packNibbles.lst) OBJE
+                      CT(.\Objects\packNibbles.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Takes 2 nibbles as input and combine them into a byte
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0003                   5     delay:                          ;This routine takes input from 50H location
+
+0003 C0D0              6             push psw
+
+0005 75D008            7             mov psw,#08H
+
+                       8             using 1
+
+0008 E550              9             mov A,50H               ;This is D
+
+000A 75F014           10             mov B,#20               ;Divides D by 2 and multiplies by 20 to convert into second
+                             s
+
+000D A4               11             mul AB                  ;Now A has the total number of times delay must be called
+
+000E F8               12             mov r0,A                ;Total number of iterations over 50ms stored in A
+
+000F                  13             delay1:
+
+000F 7AC8             14                     mov R2,#200
+
+0011                  15                     back1:
+
+0011 79FF             16                             mov R1,#0FFH
+
+0013 D9FE             17                             back: djnz R1, back
+
+0015 DAFA             18                     djnz R2, back1
+
+0017 D8F6             19             djnz r0, delay1
+
+0019 D0D0             20             pop psw
+
+001B 22               21     ret
+
+                      22     
+
+001C                  23     readNibble:
+
+                      24             using 0
+
+001C 755005           25             mov 50H,#5D     
+
+001F 7800             26             mov R0,#0
+
+0021                  27             loop:
+
+0021 884E             28                     mov 4EH,R0
+
+0023 7590FF           29                     mov P1,#0FFH
+
+                      30                     ;acall delay
+
+0026 53900F           31                     anl P1,#0FH
+
+0029 E590             32                     mov A,P1
+
+002B F8               33                     mov R0,A
+
+002C C4               34                     swap A
+
+002D 4290             35                     orl P1,A
+
+                      36                     ;acall delay
+
+002F B80FEF           37                     cjne R0,#0FH,loop
+
+                      38                     
+
+0032 E54E             39                     mov A,4EH
+
+0034 C4               40                     swap A
+
+0035 F590             41                     mov P1,A
+
+                      42                     ;acall delay
+
+0037 759000           43                     mov P1,#00H
+
+003A 755001           44                     mov 50H,#1
+
+                      45                     ;acall delay
+
+003D 22               46     ret
+
+                      47     
+
+003E                  48     packNibble:
+
+003E 111C             49             acall readNibble
+
+0040 E54E             50             mov A,4EH
+
+0042 C4               51             swap A
+
+0043 F54F             52             mov 4FH,A
+
+0045 111C             53             acall readNIbble
+
+0047 E54E             54             mov A,4EH
+
+0049 454F             55             orl A,4FH
+
+004B F54F             56             mov 4FH,A
+
+A51 MACRO ASSEMBLER  PACKNIBBLES                                                          08/20/2017 10:27:23 PAGE     2
+
+004D 22               57     ret
+
+                      58     
+
+0100                  59     org 100h
+
+0100                  60     main:
+
+0100 113E             61             acall packNibble
+
+0102 80FE             62             stop: sjmp stop
+
+                      63     end
+
+A51 MACRO ASSEMBLER  PACKNIBBLES                                                          08/20/2017 10:27:23 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   0013H   A   
+BACK1. . . . . . .  C ADDR   0011H   A   
+DELAY. . . . . . .  C ADDR   0003H   A   
+DELAY1 . . . . . .  C ADDR   000FH   A   
+LOOP . . . . . . .  C ADDR   0021H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+PACKNIBBLE . . . .  C ADDR   003EH   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+READNIBBLE . . . .  C ADDR   001CH   A   
+STOP . . . . . . .  C ADDR   0102H   A   
+
+
+REGISTER BANK(S) USED: 0 1 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

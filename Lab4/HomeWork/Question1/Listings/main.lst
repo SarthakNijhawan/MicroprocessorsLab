@@ -1,0 +1,44 @@
+A51 MACRO ASSEMBLER  MAIN                                                                 08/20/2017 11:28:52 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\main.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE main.asm SET(SMALL) DEBUG PRINT(.\Listings\main.lst) OBJECT(.\Objects\m
+                      ain.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; Display Name on LCD
+
+0000                   2     org 0h
+
+0000 020100            3     ljmp main
+
+                       4     
+
+0100                   5     org 100h
+
+0100                   6     main:
+
+                       7             
+
+0100 80FE              8             stop: sjmp stop
+
+                       9     end
+
+A51 MACRO ASSEMBLER  MAIN                                                                 08/20/2017 11:28:52 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+MAIN . . . . . . .  C ADDR   0100H   A   
+STOP . . . . . . .  C ADDR   0100H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

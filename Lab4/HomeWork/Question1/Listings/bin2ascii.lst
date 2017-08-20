@@ -1,0 +1,119 @@
+A51 MACRO ASSEMBLER  BIN2ASCII                                                            08/20/2017 11:28:52 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\bin2ascii.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE bin2ascii.asm SET(SMALL) DEBUG PRINT(.\Listings\bin2ascii.lst) OBJECT(.
+                      \Objects\bin2ascii.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ; bin2ascii subroutine
+
+                       2     
+
+0000                   3     write_lower_nibble: ; Lower nibble in 53h and write location in r0
+
+                       4             using 0
+
+0000 C3                5                     clr c
+
+0001 940A              6                     subb A,#0ah
+
+0003 4005              7                     jc digit
+
+0005 2461              8                             add A,#61h
+
+0007 F6                9                             mov @r0,A
+
+0008 8005             10                     sjmp comp
+
+000A                  11                     digit:
+
+000A E553             12                             mov A,53h
+
+000C 2430             13                             add A,#30h
+
+000E F6               14                             mov @r0,A
+
+000F 00               15                     comp: nop
+
+0010 22               16     ret
+
+                      17     
+
+0011                  18     bin2ascii:
+
+0011 AA50             19             mov r2,50h ; N
+
+0013 A951             20             mov r1,51h ; Read pointer
+
+0015 A852             21             mov r0,52h ; Write pointer
+
+0017 7BF0             22             mov r3,#0f0h ; Starts the loop by extracting the lower 4-bits
+
+                      23             
+
+0019                  24             loop:
+
+0019 E7               25                     mov A,@r1
+
+001A 5B               26                     anl A,r3 ; higher nibble saved , rest all bits to 0
+
+001B 7C04             27                     mov r4,#4
+
+001D                  28                     rot: ; upper nibble is now in the lower half
+
+001D 03               29                             rr A
+
+001E DCFD             30                     djnz r4, rot
+
+0020 F553             31                     mov 53h,A
+
+0022 1100             32                     acall write_lower_nibble ; 53 is reserved for its argument parameter
+
+0024 08               33                     inc r0
+
+                      34                     
+
+0025 EB               35                     mov A,r3
+
+0026 F4               36                     cpl A
+
+0027 57               37                     anl A,@r1 ; Lower order bits recovered
+
+0028 F553             38                     mov 53h,A
+
+002A 1100             39                     acall write_lower_nibble
+
+002C 08               40                     inc r0
+
+                      41                     
+
+002D 09               42                     inc r1
+
+002E DAE9             43             djnz r2,loop
+
+0030 22               44     ret
+
+*** WARNING #A41 IN 44 (bin2ascii.asm, LINE 44): MISSING 'END' STATEMENT
+A51 MACRO ASSEMBLER  BIN2ASCII                                                            08/20/2017 11:28:52 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+BIN2ASCII. . . . .  C ADDR   0011H   A   
+COMP . . . . . . .  C ADDR   000FH   A   
+DIGIT. . . . . . .  C ADDR   000AH   A   
+LOOP . . . . . . .  C ADDR   0019H   A   
+ROT. . . . . . . .  C ADDR   001DH   A   
+WRITE_LOWER_NIBBLE  C ADDR   0000H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  1 WARNING(S), 0 ERROR(S)

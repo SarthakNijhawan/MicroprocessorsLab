@@ -1,0 +1,117 @@
+A51 MACRO ASSEMBLER  READNIBBLE                                                           08/20/2017 11:28:52 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\readNibble.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE readNibble.asm SET(SMALL) DEBUG PRINT(.\Listings\readNibble.lst) OBJECT
+                      (.\Objects\readNibble.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;; Assembly program to read a nibble from the slider swithches and dislplay on the LEDs
+
+0000                   2     delay:                          ;This routine takes input from 4FH location
+
+0000 C0D0              3             push psw
+
+0002 75D008            4             mov psw,#08H
+
+                       5             using 1
+
+0005 E54F              6             mov A,4FH               ;This is D
+
+0007 75F014            7             mov B,#20               ;Divides D by 2 and multiplies by 20 to convert into second
+                             s
+
+000A A4                8             mul AB                  ;Now A has the total number of times delay must be called
+
+000B F8                9             mov r0,A                ;Total number of iterations over 50ms stored in A
+
+000C                  10             delay1:
+
+000C 7AC8             11                     mov R2,#200
+
+000E                  12                     back1:
+
+000E 79FF             13                             mov R1,#0FFH
+
+0010 D9FE             14                             back: djnz R1, back
+
+0012 DAFA             15                     djnz R2, back1
+
+0014 D8F6             16             djnz r0, delay1
+
+0016 D0D0             17             pop psw
+
+0018 22               18     ret
+
+                      19     
+
+0019                  20     readNibble:
+
+                      21             using 0
+
+0019 754F05           22             mov 4FH,#5D     
+
+001C 7800             23             mov R0,#0
+
+001E                  24             loop:
+
+001E 884E             25                     mov 4EH,R0
+
+0020 7590FF           26                     mov P1,#0FFH
+
+0023 1100             27                     acall delay
+
+0025 53900F           28                     anl P1,#0FH
+
+0028 E590             29                     mov A,P1
+
+002A F8               30                     mov R0,A
+
+002B C4               31                     swap A
+
+002C 4290             32                     orl P1,A
+
+002E 1100             33                     acall delay
+
+0030 B80FEB           34                     cjne R0,#0FH,loop
+
+                      35                     
+
+0033 E54E             36                     mov A,4EH
+
+0035 C4               37                     swap A
+
+0036 F590             38                     mov P1,A
+
+0038 1100             39                     acall delay
+
+003A 759000           40                     mov P1,#00H
+
+003D 22               41     ret
+
+*** WARNING #A41 IN 41 (readNibble.asm, LINE 41): MISSING 'END' STATEMENT
+A51 MACRO ASSEMBLER  READNIBBLE                                                           08/20/2017 11:28:52 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+BACK . . . . . . .  C ADDR   0010H   A   
+BACK1. . . . . . .  C ADDR   000EH   A   
+DELAY. . . . . . .  C ADDR   0000H   A   
+DELAY1 . . . . . .  C ADDR   000CH   A   
+LOOP . . . . . . .  C ADDR   001EH   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+READNIBBLE . . . .  C ADDR   0019H   A   
+
+
+REGISTER BANK(S) USED: 0 1 
+
+
+ASSEMBLY COMPLETE.  1 WARNING(S), 0 ERROR(S)
