@@ -1,0 +1,623 @@
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question2.asm SET(SMALL) DEBUG PRINT(.\Listings\question2.lst) OBJECT(.
+                      \Objects\question2.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Display the contents stored at a memloc on the LCD
+
+  00A0                 2     LCD_data equ P2    ;LCD Data port
+
+  0080                 3     LCD_rs   equ P0.0  ;LCD Register Select
+
+  0081                 4     LCD_rw   equ P0.1  ;LCD Read/Write
+
+  0082                 5     LCD_en   equ P0.2  ;LCD Enable
+
+                       6     
+
+0000                   7     org 00h
+
+0000 020185            8     ljmp main
+
+                       9     
+
+0100                  10     org 100h
+
+                      11     ;======================================
+
+                      12     ;                       Delay Function
+
+                      13     ;======================================
+
+0100                  14     delay_:                                 ;This routine takes input from 50H location
+
+0100 C0D0             15             push psw
+
+0102 75D008           16             mov psw,#08H
+
+                      17             using 1
+
+0105 E550             18             mov A,50H                       ;This is D
+
+0107 75F00A           19             mov B,#10                       ;Divides D by 2 and multiplies by 20 to convert int
+                             o seconds
+
+010A A4               20             mul AB                          ;Now A has the total number of times delay must be 
+                             called
+
+010B F8               21             mov r0,A                        ;Total number of iterations over 50ms stored in A
+
+010C                  22             delay1:
+
+010C 7AC8             23                     mov R2,#200
+
+010E                  24                     back1:
+
+010E 79FF             25                             mov R1,#0FFH
+
+0110 D9FE             26                             back: djnz R1, back
+
+0112 DAFA             27                     djnz R2, back1
+
+0114 D8F6             28             djnz r0, delay1
+
+0116 D0D0             29             pop psw
+
+0118 22               30     ret
+
+                      31     
+
+                      32     ;======================================
+
+                      33     ;                       packNibble Function
+
+                      34     ;======================================
+
+                      35     
+
+0119                  36     readNibble:
+
+                      37             using 0
+
+0119 75500A           38             mov 50H,#10D
+
+011C 7800             39             mov R0,#0
+
+011E                  40             loop:
+
+011E 884E             41                     mov 4EH,R0
+
+0120 7590FF           42                     mov P1,#0FFH
+
+0123 3100             43                     acall delay_
+
+0125 53900F           44                     anl P1,#0FH
+
+0128 E590             45                     mov A,P1
+
+012A F8               46                     mov R0,A
+
+012B C4               47                     swap A
+
+012C 4290             48                     orl P1,A
+
+012E 3100             49                     acall delay_
+
+0130 B80FEB           50                     cjne R0,#0FH,loop
+
+                      51                     
+
+0133 E54E             52                     mov A,4EH
+
+0135 C4               53                     swap A
+
+0136 F590             54                     mov P1,A
+
+0138 3100             55                     acall delay_
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     2
+
+013A 759000           56                     mov P1,#00H
+
+013D 755002           57                     mov 50H,#2
+
+0140 3100             58                     acall delay_
+
+0142 22               59     ret
+
+                      60     
+
+0143                  61     packNibble:
+
+0143 3119             62             acall readNibble
+
+0145 E54E             63             mov A,4EH
+
+0147 C4               64             swap A
+
+0148 F54F             65             mov 4FH,A
+
+014A 3119             66             acall readNibble
+
+014C E54E             67             mov A,4EH
+
+014E 454F             68             orl A,4FH
+
+0150 F54F             69             mov 4FH,A
+
+0152 22               70     ret
+
+                      71     
+
+                      72     ;======================================
+
+                      73     ;               bin2ascii subroutine    
+
+                      74     ;======================================
+
+                      75     
+
+0153                  76     write_nibble:                   ;Lower nibble in 53h and write location in r0
+
+0153 C3               77                     clr c
+
+0154 940A             78                     subb A,#0ah
+
+0156 4005             79                     jc digit
+
+0158 2441             80                             add A,#41h
+
+015A F6               81                             mov @r0,A
+
+015B 8005             82                     sjmp comp
+
+015D                  83                     digit:
+
+015D E553             84                             mov A,53h
+
+015F 2430             85                             add A,#30h
+
+0161 F6               86                             mov @r0,A
+
+0162 22               87                     comp: ret
+
+                      88     
+
+0163                  89     bin2ascii:
+
+                      90             using 1
+
+0163 C0D0             91                     push psw
+
+0165 75D008           92                     mov psw,#08H
+
+0168 AA50             93             mov r2,50h ; N
+
+016A A951             94             mov r1,51h ; Read pointer
+
+016C A852             95             mov r0,52h ; Write pointer      
+
+                      96             
+
+016E                  97             binloop:
+
+016E E7               98                     mov A,@r1
+
+016F 54F0             99                     anl A,#0F0H             ; higher nibble saved , rest all bits to 0
+
+0171 C4              100                     swap A
+
+0172 F553            101                     mov 53h,A
+
+0174 3153            102                     acall write_nibble ; 53 is reserved for its argument parameter
+
+0176 08              103                     inc r0
+
+                     104                     
+
+0177 740F            105                     mov A,#0FH
+
+0179 57              106                     anl A,@r1 ; Lower order bits recovered
+
+017A F553            107                     mov 53h,A
+
+017C 3153            108                     acall write_nibble
+
+017E 08              109                     inc r0
+
+017F 09              110                     inc r1
+
+0180 DAEC            111             djnz r2,binloop
+
+0182 D0D0            112             pop psw
+
+0184 22              113     ret
+
+                     114     
+
+                     115     ;===============================================
+
+                     116     ;                               Main Function
+
+                     117     ;===============================================
+
+0185                 118     main:
+
+0185 7581C7          119             mov sp,#0C7H
+
+0188 751253          120             mov 12H,#53H
+
+                     121             
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     3
+
+018B 75900F          122             mov P1,#0FH                             ;First configure switches as input and LED’
+                             s as output
+
+018E 31DD            123             acall lcd_init                  ;initialise LCD
+
+0190 514D            124             acall delay
+
+0192 514D            125             acall delay
+
+0194 514D            126             acall delay
+
+                     127     
+
+0196                 128     loop_main:
+
+                     129             
+
+0196 7480            130             mov   a,#80h                    ;Put cursor on first row,0 column
+
+0198 511A            131             acall lcd_command               ;send command to LCD
+
+019A 514D            132             acall delay
+
+019C 900300          133             mov  dptr,#my_string    ;Load DPTR with sring1 Addr
+
+019F 513A            134             acall lcd_sendstring    ;call text strings sending routine
+
+01A1 514D            135             acall delay
+
+                     136     
+
+01A3 850A50          137             mov 50H,10D                             ;wait for 5 sec
+
+01A6 3100            138             acall delay_
+
+                     139             
+
+01A8 3143            140             acall packNibble                ;Read 8 bit value using subroutine packNibbles
+
+                     141             
+
+                     142             ;;;;;;;;
+
+01AA 755001          143             mov 50H,#1                              ;Parsing the memloc
+
+01AD 75514F          144             mov 51H,#4FH
+
+01B0 755260          145             mov 52H,#60H
+
+01B3 3163            146             acall bin2ascii
+
+                     147             
+
+01B5 756220          148             mov 62H,#' '
+
+01B8 A84F            149             mov r0,4FH
+
+01BA 864F            150             mov 4FH,@r0                             ;Storing the value inside the location stor
+                             ed in 4FH
+
+                     151             
+
+01BC 755001          152             mov 50H,#1                              ;Parsing the memloc
+
+01BF 75514F          153             mov 51H,#4FH
+
+01C2 755263          154             mov 52H,#63H
+
+01C5 3163            155             acall bin2ascii
+
+                     156             
+
+01C7 756500          157             mov 65H,#0H
+
+                     158             
+
+                     159             ;Display the value of memory address and content in Hex on LCD
+
+01CA 74C5            160             mov a,#0C5H                              ;Put cursor on second row,0 column
+
+01CC 511A            161             acall lcd_command
+
+01CE 514D            162             acall delay
+
+01D0 7860            163             mov   r0,#60H
+
+01D2 5144            164             acall lcd_sendstring_name;eg: Display "12 53"  where memory location 12H contains v
+                             alue 53H
+
+                     165             
+
+01D4 75500A          166             mov 50H,#10D                            ;wait for 5 sec
+
+01D7 3100            167             acall delay_
+
+                     168             
+
+01D9 80BB            169             sjmp loop_main                           ;return to loop
+
+                     170             
+
+01DB 80FE            171             stop: sjmp stop
+
+                     172     
+
+                     173     ;======================================
+
+                     174     ;                       LCD subroutines
+
+                     175     ;======================================
+
+01DD                 176     lcd_init:
+
+01DD 75A038          177              mov   LCD_data,#38H  ;Function set: 2 Line, 8-bit, 5x7 dots
+
+01E0 C280            178              clr   LCD_rs         ;Selected command register
+
+01E2 C281            179              clr   LCD_rw         ;We are writing in instruction register
+
+01E4 D282            180              setb  LCD_en         ;Enable H->L
+
+01E6 514D            181                      acall delay
+
+01E8 C282            182              clr   LCD_en
+
+01EA 514D            183                  acall delay
+
+                     184     
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     4
+
+01EC 75A00C          185              mov   LCD_data,#0CH  ;Display on, Curson off
+
+01EF C280            186              clr   LCD_rs         ;Selected instruction register
+
+01F1 C281            187              clr   LCD_rw         ;We are writing in instruction register
+
+01F3 D282            188              setb  LCD_en         ;Enable H->L
+
+01F5 514D            189                      acall delay
+
+01F7 C282            190              clr   LCD_en
+
+                     191              
+
+01F9 514D            192                      acall delay
+
+01FB 75A001          193              mov   LCD_data,#01H  ;Clear LCD
+
+01FE C280            194              clr   LCD_rs         ;Selected command register
+
+0200 C281            195              clr   LCD_rw         ;We are writing in instruction register
+
+0202 D282            196              setb  LCD_en         ;Enable H->L
+
+0204 514D            197                      acall delay
+
+0206 C282            198              clr   LCD_en
+
+                     199              
+
+0208 514D            200                      acall delay
+
+                     201     
+
+020A 75A006          202              mov   LCD_data,#06H  ;Entry mode, auto increment with no shift
+
+020D C280            203              clr   LCD_rs         ;Selected command register
+
+020F C281            204              clr   LCD_rw         ;We are writing in instruction register
+
+0211 D282            205              setb  LCD_en         ;Enable H->L
+
+0213 514D            206                      acall delay
+
+0215 C282            207              clr   LCD_en
+
+                     208     
+
+0217 514D            209                      acall delay
+
+                     210              
+
+0219 22              211              ret                  ;Return from routine
+
+                     212     
+
+                     213     ;-----------------------command sending routine-------------------------------------
+
+021A                 214      lcd_command:
+
+021A F5A0            215              mov   LCD_data,A     ;Move the command to LCD port
+
+021C C280            216              clr   LCD_rs         ;Selected command register
+
+021E C281            217              clr   LCD_rw         ;We are writing in instruction register
+
+0220 D282            218              setb  LCD_en         ;Enable H->L
+
+0222 514D            219                      acall delay
+
+0224 C282            220              clr   LCD_en
+
+0226 514D            221                      acall delay
+
+                     222         
+
+0228 22              223              ret  
+
+                     224     ;-----------------------data sending routine-------------------------------------          
+                                       
+
+0229                 225      lcd_senddata:
+
+0229 F5A0            226              mov   LCD_data,A     ;Move the command to LCD port
+
+022B D280            227              setb  LCD_rs         ;Selected data register
+
+022D C281            228              clr   LCD_rw         ;We are writing
+
+022F D282            229              setb  LCD_en         ;Enable H->L
+
+0231 514D            230                      acall delay
+
+0233 C282            231              clr   LCD_en
+
+0235 514D            232              acall delay
+
+0237 514D            233                      acall delay
+
+0239 22              234              ret                  ;Return from busy routine
+
+                     235     
+
+                     236     ;-----------------------text strings sending routine-------------------------------------
+
+023A                 237     lcd_sendstring:
+
+023A E4              238              clr   a                 ;clear Accumulator for any previous data
+
+023B 93              239              movc  a,@a+dptr         ;load the first character in accumulator
+
+023C 6005            240              jz    exit              ;go to exit if zero
+
+023E 5129            241              acall lcd_senddata      ;send first char
+
+0240 A3              242              inc   dptr              ;increment data pointer
+
+0241 80F7            243              sjmp  LCD_sendstring    ;jump back to send the next character
+
+0243                 244     exit:
+
+0243 22              245              ret                     ;End of routine
+
+                     246                      
+
+                     247     ;-----------------------text strings sending routine-------------------------------------
+
+0244                 248     lcd_sendstring_name:
+
+0244 E6              249              mov   a,@r0             ;load the first character in accumulator
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     5
+
+0245 6005            250              jz    exit2              ;go to exit if zero
+
+0247 5129            251              acall lcd_senddata      ;send first char
+
+0249 08              252              inc   r0               ;increment register
+
+024A 80F8            253              sjmp  LCD_sendstring_name    ;jump back to send the next character
+
+024C                 254     exit2:
+
+024C 22              255              ret                     ;End of routine
+
+                     256     
+
+                     257     ;----------------------delay routine-----------------------------------------------------
+
+024D                 258     delay:   
+
+                     259             using 1
+
+024D C0D0            260                     push psw
+
+024F 75D008          261                     mov psw,#08H
+
+0252 7801            262              mov r0,#1
+
+0254 79FF            263     loop2:   mov r1,#255
+
+0256 D9FE            264     loop1:   djnz r1, loop1
+
+0258 D8FA            265                      djnz r0,loop2
+
+025A D0D0            266                      pop psw
+
+025C 22              267                      ret
+
+                     268     
+
+0300                 269     org 300h
+
+0300                 270             my_string:
+
+0300 456E7465        271                     DB 'Enter memory Location',00H
+
+0304 72206D65                
+0308 6D6F7279                
+030C 204C6F63                
+0310 6174696F                
+0314 6E00                    
+                     272     end
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     6
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E              T Y P E  V A L U E   ATTRIBUTES
+
+B . . . . . . . . .  D ADDR   00F0H   A   
+BACK. . . . . . . .  C ADDR   0110H   A   
+BACK1 . . . . . . .  C ADDR   010EH   A   
+BIN2ASCII . . . . .  C ADDR   0163H   A   
+BINLOOP . . . . . .  C ADDR   016EH   A   
+COMP. . . . . . . .  C ADDR   0162H   A   
+DELAY . . . . . . .  C ADDR   024DH   A   
+DELAY1. . . . . . .  C ADDR   010CH   A   
+DELAY_. . . . . . .  C ADDR   0100H   A   
+DIGIT . . . . . . .  C ADDR   015DH   A   
+EXIT. . . . . . . .  C ADDR   0243H   A   
+EXIT2 . . . . . . .  C ADDR   024CH   A   
+LCD_COMMAND . . . .  C ADDR   021AH   A   
+LCD_DATA. . . . . .  D ADDR   00A0H   A   
+LCD_EN. . . . . . .  B ADDR   0080H.2 A   
+LCD_INIT. . . . . .  C ADDR   01DDH   A   
+LCD_RS. . . . . . .  B ADDR   0080H.0 A   
+LCD_RW. . . . . . .  B ADDR   0080H.1 A   
+LCD_SENDDATA. . . .  C ADDR   0229H   A   
+LCD_SENDSTRING. . .  C ADDR   023AH   A   
+LCD_SENDSTRING_NAME  C ADDR   0244H   A   
+LOOP. . . . . . . .  C ADDR   011EH   A   
+LOOP1 . . . . . . .  C ADDR   0256H   A   
+LOOP2 . . . . . . .  C ADDR   0254H   A   
+LOOP_MAIN . . . . .  C ADDR   0196H   A   
+MAIN. . . . . . . .  C ADDR   0185H   A   
+MY_STRING . . . . .  C ADDR   0300H   A   
+P0. . . . . . . . .  D ADDR   0080H   A   
+P1. . . . . . . . .  D ADDR   0090H   A   
+P2. . . . . . . . .  D ADDR   00A0H   A   
+PACKNIBBLE. . . . .  C ADDR   0143H   A   
+PSW . . . . . . . .  D ADDR   00D0H   A   
+READNIBBLE. . . . .  C ADDR   0119H   A   
+SP. . . . . . . . .  D ADDR   0081H   A   
+STOP. . . . . . . .  C ADDR   01DBH   A   
+WRITE_NIBBLE. . . .  C ADDR   0153H   A   
+
+
+REGISTER BANK(S) USED: 0 1 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
