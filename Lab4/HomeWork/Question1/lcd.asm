@@ -41,8 +41,10 @@ main:
 	mov @r0,#61H
 	inc r0
 	mov @r0,#6EH
-	
+	inc r0
+	mov @r0,#00H
 	ljmp start
+	
 org 200h
 start:
       mov P2,#00h
@@ -61,7 +63,7 @@ start:
 	  acall delay
 	  acall delay
 	  acall delay
-	  mov 	a,#85h		 ;Put cursor on first row,5 column
+	  mov 	a,#83h		 ;Put cursor on first row,3 column
 	  acall lcd_command	 ;send command to LCD
 	  acall delay
 	  mov   dptr,#my_string1   ;Load DPTR with sring1 Addr
@@ -174,6 +176,6 @@ loop1:	 djnz r1, loop1
 ;------------- ROM text strings---------------------------------------------------------------
 org 300h
 my_string1:
-         DB   "EE 337", 00H
+         DB   "EE337-Lab2", 00H
 end
 

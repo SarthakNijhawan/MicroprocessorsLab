@@ -368,21 +368,6 @@
               <FileType>2</FileType>
               <FilePath>.\lcd.asm</FilePath>
             </File>
-            <File>
-              <FileName>bin2ascii.asm</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\bin2ascii.asm</FilePath>
-            </File>
-            <File>
-              <FileName>readNibble.asm</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\readNibble.asm</FilePath>
-            </File>
-            <File>
-              <FileName>main.asm</FileName>
-              <FileType>2</FileType>
-              <FilePath>.\main.asm</FilePath>
-            </File>
           </Files>
         </Group>
       </Groups>

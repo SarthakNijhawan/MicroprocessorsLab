@@ -1,10 +1,10 @@
-A51 MACRO ASSEMBLER  LCD                                                                  08/21/2017 00:53:35 PAGE     1
+A51 MACRO ASSEMBLER  JHAAT_LCD                                                            08/21/2017 00:52:06 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
-OBJECT MODULE PLACED IN .\Objects\lcd.obj
-ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE lcd.asm SET(SMALL) DEBUG PRINT(.\Listings\lcd.lst) OBJECT(.\Objects\lcd
-                      .obj) EP
+OBJECT MODULE PLACED IN .\Objects\jhaat_lcd.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE ..\..\..\jhaat_lcd.asm SET(SMALL) DEBUG PRINT(.\Listings\jhaat_lcd.lst)
+                       OBJECT(.\Objects\jhaat_lcd.obj) EP
 
 LOC  OBJ            LINE     SOURCE
 
@@ -30,75 +30,75 @@ LOC  OBJ            LINE     SOURCE
 
 0100                  11     main:
 
-0100 7880             12             mov r0,#80H
+                      12     
 
-0102 7653             13             mov @r0,#53H
+0100 7890             13             mov r0,#90H
 
-0104 08               14             inc r0
+0102 7653             14             mov @r0,#'S'
 
-0105 7661             15             mov @r0,#61H
+0104 08               15             inc r0
 
-0107 08               16             inc r0
+0105 7668             16             mov @r0,#'h'
 
-0108 7672             17             mov @r0,#72H
+0107 08               17             inc r0
 
-010A 08               18             inc r0
+0108 7675             18             mov @r0,#'u'
 
-010B 7674             19             mov @r0,#74H
+010A 08               19             inc r0
 
-010D 08               20             inc r0
+010B 7662             20             mov @r0,#'b'
 
-010E 7668             21             mov @r0,#68H
+010D 08               21             inc r0
 
-0110 08               22             inc r0
+010E 7668             22             mov @r0,#'h'
 
-0111 7661             23             mov @r0,#61H
+0110 08               23             inc r0
 
-0113 08               24             inc r0
+0111 7661             24             mov @r0,#'a'
 
-0114 766B             25             mov @r0,#6BH
+0113 08               25             inc r0
 
-0116 08               26             inc r0
+0114 766D             26             mov @r0,#'m'
 
-0117 7620             27             mov @r0,#20H
+0116 08               27             inc r0
 
-0119 08               28             inc r0
+0117 7620             28             mov @r0,#' '
 
-011A 764E             29             mov @r0,#4EH
+0119 08               29             inc r0
 
-011C 08               30             inc r0
+011A 7644             30             mov @r0,#'D'
 
-011D 7669             31             mov @r0,#69H
+011C 08               31             inc r0
 
-011F 08               32             inc r0
+011D 7668             32             mov @r0,#'h'
 
-0120 766A             33             mov @r0,#6AH
+011F 08               33             inc r0
 
-0122 08               34             inc r0
+0120 7661             34             mov @r0,#'a'
 
-0123 7668             35             mov @r0,#68H
+0122 08               35             inc r0
 
-0125 08               36             inc r0
+0123 766E             36             mov @r0,#'n'
 
-0126 7661             37             mov @r0,#61H
+0125 08               37             inc r0
 
-0128 08               38             inc r0
+0126 7667             38             mov @r0,#'g'
 
-0129 7677             39             mov @r0,#77H
+0128 08               39             inc r0
 
-012B 08               40             inc r0
+0129 7661             40             mov @r0,#'a'
 
-012C 7661             41             mov @r0,#61H
+012B 08               41             inc r0
 
-012E 08               42             inc r0
+012C 7672             42             mov @r0,#'r'
 
-012F 766E             43             mov @r0,#6EH
+012E 08               43             inc r0
 
-0131 08               44             inc r0
+012F 7620             44             mov @r0,#' '
 
-0132 7600             45             mov @r0,#00H
+                      45             
 
-0134 020200           46             ljmp start
+0131 020200           46             ljmp start
 
                       47             
 
@@ -116,13 +116,13 @@ LOC  OBJ            LINE     SOURCE
 
                       54     ;here1:setb p1.0
 
-0206 519C             55           acall delay
+0206 519B             55           acall delay
 
                       56     ;         clr p1.0
 
-0208 519C             57               acall delay
+0208 519B             57               acall delay
 
-A51 MACRO ASSEMBLER  LCD                                                                  08/21/2017 00:53:35 PAGE     2
+A51 MACRO ASSEMBLER  JHAAT_LCD                                                            08/21/2017 00:52:06 PAGE     2
 
                       58     ;         sjmp here1
 
@@ -134,23 +134,23 @@ LOC  OBJ            LINE     SOURCE
 
                       62             
 
-020C 519C             63               acall delay
+020C 519B             63               acall delay
 
-020E 519C             64               acall delay
+020E 519B             64               acall delay
 
-0210 519C             65               acall delay
+0210 519B             65               acall delay
 
-0212 7485             66               mov   a,#85h           ;Put cursor on first row,5 column
+0212 7483             66               mov   a,#83h           ;Put cursor on first row,3 column
 
 0214 5168             67               acall lcd_command      ;send command to LCD
 
-0216 519C             68               acall delay
+0216 519B             68               acall delay
 
 0218 900300           69               mov   dptr,#my_string1   ;Load DPTR with sring1 Addr
 
 021B 5188             70               acall lcd_sendstring     ;call text strings sending routine
 
-021D 519C             71               acall delay
+021D 519B             71               acall delay
 
                       72     
 
@@ -158,11 +158,11 @@ LOC  OBJ            LINE     SOURCE
 
 0221 5168             74               acall lcd_command
 
-0223 519C             75               acall delay
+0223 519B             75               acall delay
 
-0225 7880             76               mov   r0,#80H
+0225 7990             76               mov   r1,#90H
 
-0227 5192             77               acall lcd_sendstring_name
+0227 5192             77               acall lcd_ramaccess
 
                       78     
 
@@ -183,11 +183,11 @@ LOC  OBJ            LINE     SOURCE
 
 0232 D282             86              setb  LCD_en         ;Enable H->L
 
-0234 519C             87                      acall delay
+0234 519B             87                      acall delay
 
 0236 C282             88              clr   LCD_en
 
-0238 519C             89                  acall delay
+0238 519B             89                  acall delay
 
                       90     
 
@@ -199,13 +199,13 @@ LOC  OBJ            LINE     SOURCE
 
 0241 D282             94              setb  LCD_en         ;Enable H->L
 
-0243 519C             95                      acall delay
+0243 519B             95                      acall delay
 
 0245 C282             96              clr   LCD_en
 
                       97              
 
-0247 519C             98                      acall delay
+0247 519B             98                      acall delay
 
 0249 75A001           99              mov   LCD_data,#01H  ;Clear LCD
 
@@ -215,13 +215,13 @@ LOC  OBJ            LINE     SOURCE
 
 0250 D282            102              setb  LCD_en         ;Enable H->L
 
-0252 519C            103                      acall delay
+0252 519B            103                      acall delay
 
 0254 C282            104              clr   LCD_en
 
                      105              
 
-0256 519C            106                      acall delay
+0256 519B            106                      acall delay
 
                      107     
 
@@ -233,13 +233,13 @@ LOC  OBJ            LINE     SOURCE
 
 025F D282            111              setb  LCD_en         ;Enable H->L
 
-0261 519C            112                      acall delay
+0261 519B            112                      acall delay
 
 0263 C282            113              clr   LCD_en
 
                      114     
 
-0265 519C            115                      acall delay
+0265 519B            115                      acall delay
 
                      116              
 
@@ -255,17 +255,17 @@ LOC  OBJ            LINE     SOURCE
 
 026A C280            122              clr   LCD_rs         ;Selected command register
 
-A51 MACRO ASSEMBLER  LCD                                                                  08/21/2017 00:53:35 PAGE     3
+A51 MACRO ASSEMBLER  JHAAT_LCD                                                            08/21/2017 00:52:06 PAGE     3
 
 026C C281            123              clr   LCD_rw         ;We are writing in instruction register
 
 026E D282            124              setb  LCD_en         ;Enable H->L
 
-0270 519C            125                      acall delay
+0270 519B            125                      acall delay
 
 0272 C282            126              clr   LCD_en
 
-0274 519C            127                      acall delay
+0274 519B            127                      acall delay
 
                      128         
 
@@ -284,13 +284,13 @@ LOC  OBJ            LINE     SOURCE
 
 027D D282            135              setb  LCD_en         ;Enable H->L
 
-027F 519C            136                      acall delay
+027F 519B            136                      acall delay
 
 0281 C282            137              clr   LCD_en
 
-0283 519C            138              acall delay
+0283 519B            138              acall delay
 
-0285 519C            139                      acall delay
+0285 519B            139                      acall delay
 
 0287 22              140              ret                  ;Return from busy routine
 
@@ -320,45 +320,45 @@ LOC  OBJ            LINE     SOURCE
 
                      153     ;-----------------------text strings sending routine-------------------------------------
 
-0292                 154     lcd_sendstring_name:
+0292                 154     lcd_ramaccess:
 
-0292 E4              155              clr   a                 ;clear Accumulator for any previous data
+0292 E7              155              mov   a,@r1             ;load the first character in accumulator
 
-0293 E6              156              mov   a,@r0             ;load the first character in accumulator
+0293 6005            156              jz    quit              ;go to exit if zero
 
-0294 6005            157              jz    exit2              ;go to exit if zero
+0295 5177            157              acall lcd_senddata      ;send first char
 
-0296 5177            158              acall lcd_senddata      ;send first char
+0297 09              158              inc   r1              ;increment data pointer
 
-0298 08              159              inc   r0              ;increment data pointer
+0298 80F8            159              sjmp  LCD_ramaccess    ;jump back to send the next character
 
-0299 80F7            160              sjmp  LCD_sendstring_name    ;jump back to send the next character
+029A                 160     quit:
 
-029B                 161     exit2:
+029A 22              161              ret                     ;End of routine
 
-029B 22              162              ret                     ;End of routine
+                     162     
 
-                     163     
+                     163     ;----------------------delay routine-----------------------------------------------------
 
-                     164     ;----------------------delay routine-----------------------------------------------------
+029B                 164     delay:   
 
-029C                 165     delay:   
+                     165                     using 0
 
-                     166             using 1
+029B C000            166                     push ar0
 
-029C C0D0            167                     push psw
+029D C001            167                     push ar1
 
-029E 75D008          168                     mov psw,#08H
+029F 7801            168              mov r0,#1
 
-02A1 7801            169              mov r0,#1
+02A1 79FF            169     loop2:   mov r1,#255
 
-02A3 79FF            170     loop2:   mov r1,#255
+02A3 D9FE            170     loop1:   djnz r1, loop1
 
-02A5 D9FE            171     loop1:   djnz r1, loop1
+02A5 D8FA            171                      djnz r0,loop2
 
-02A7 D8FA            172                      djnz r0,loop2
+02A7 D001            172                      pop ar1
 
-02A9 D0D0            173                      pop psw
+02A9 D000            173                      pop ar0
 
 02AB 22              174                      ret
 
@@ -371,46 +371,48 @@ LOC  OBJ            LINE     SOURCE
 
 0300                 178     my_string1:
 
-0300 45452033        179              DB   "EE 337", 00H
+0300 45453333        179              DB   "EE337-LAB2", 00H
 
-0304 333700                  
+0304 372D4C41                
+0308 423200                  
                      180     end
 
                              
 
-A51 MACRO ASSEMBLER  LCD                                                                  08/21/2017 00:53:35 PAGE     4
+A51 MACRO ASSEMBLER  JHAAT_LCD                                                            08/21/2017 00:52:06 PAGE     4
 
 SYMBOL TABLE LISTING
 ------ ----- -------
 
 
-N A M E              T Y P E  V A L U E   ATTRIBUTES
+N A M E             T Y P E  V A L U E   ATTRIBUTES
 
-DELAY . . . . . . .  C ADDR   029CH   A   
-EXIT. . . . . . . .  C ADDR   0291H   A   
-EXIT2 . . . . . . .  C ADDR   029BH   A   
-HERE. . . . . . . .  C ADDR   0229H   A   
-LCD_COMMAND . . . .  C ADDR   0268H   A   
-LCD_DATA. . . . . .  D ADDR   00A0H   A   
-LCD_EN. . . . . . .  B ADDR   0080H.2 A   
-LCD_INIT. . . . . .  C ADDR   022BH   A   
-LCD_RS. . . . . . .  B ADDR   0080H.0 A   
-LCD_RW. . . . . . .  B ADDR   0080H.1 A   
-LCD_SENDDATA. . . .  C ADDR   0277H   A   
-LCD_SENDSTRING. . .  C ADDR   0288H   A   
-LCD_SENDSTRING_NAME  C ADDR   0292H   A   
-LOOP1 . . . . . . .  C ADDR   02A5H   A   
-LOOP2 . . . . . . .  C ADDR   02A3H   A   
-MAIN. . . . . . . .  C ADDR   0100H   A   
-MY_STRING1. . . . .  C ADDR   0300H   A   
-P0. . . . . . . . .  D ADDR   0080H   A   
-P1. . . . . . . . .  D ADDR   0090H   A   
-P2. . . . . . . . .  D ADDR   00A0H   A   
-PSW . . . . . . . .  D ADDR   00D0H   A   
-START . . . . . . .  C ADDR   0200H   A   
+AR0. . . . . . . .  D ADDR   0000H   A   
+AR1. . . . . . . .  D ADDR   0001H   A   
+DELAY. . . . . . .  C ADDR   029BH   A   
+EXIT . . . . . . .  C ADDR   0291H   A   
+HERE . . . . . . .  C ADDR   0229H   A   
+LCD_COMMAND. . . .  C ADDR   0268H   A   
+LCD_DATA . . . . .  D ADDR   00A0H   A   
+LCD_EN . . . . . .  B ADDR   0080H.2 A   
+LCD_INIT . . . . .  C ADDR   022BH   A   
+LCD_RAMACCESS. . .  C ADDR   0292H   A   
+LCD_RS . . . . . .  B ADDR   0080H.0 A   
+LCD_RW . . . . . .  B ADDR   0080H.1 A   
+LCD_SENDDATA . . .  C ADDR   0277H   A   
+LCD_SENDSTRING . .  C ADDR   0288H   A   
+LOOP1. . . . . . .  C ADDR   02A3H   A   
+LOOP2. . . . . . .  C ADDR   02A1H   A   
+MAIN . . . . . . .  C ADDR   0100H   A   
+MY_STRING1 . . . .  C ADDR   0300H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P2 . . . . . . . .  D ADDR   00A0H   A   
+QUIT . . . . . . .  C ADDR   029AH   A   
+START. . . . . . .  C ADDR   0200H   A   
 
 
-REGISTER BANK(S) USED: 0 1 
+REGISTER BANK(S) USED: 0 
 
 
 ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
