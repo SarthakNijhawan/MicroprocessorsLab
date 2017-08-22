@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     1
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 23:57:10 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
@@ -34,7 +34,7 @@ LOC  OBJ            LINE     SOURCE
 
                       13     ;======================================
 
-0100                  14     delay_:                                 ;This routine takes input from 50H location
+0100                  14     delay_:                                         ;This routine takes input from 50H location
 
 0100 C0D0             15             push psw
 
@@ -42,15 +42,16 @@ LOC  OBJ            LINE     SOURCE
 
                       17             using 1
 
-0105 E550             18             mov A,50H                       ;This is D
+0105 E550             18             mov A,50H                               ;This is D
 
-0107 75F00A           19             mov B,#10                       ;Divides D by 2 and multiplies by 20 to convert int
-                             o seconds
+0107 75F00A           19             mov B,#10                               ;Divides D by 2 and multiplies by 20 to con
+                             vert into seconds
 
-010A A4               20             mul AB                          ;Now A has the total number of times delay must be 
-                             called
+010A A4               20             mul AB                                  ;Now A has the total number of times delay 
+                             must be called
 
-010B F8               21             mov r0,A                        ;Total number of iterations over 50ms stored in A
+010B F8               21             mov r0,A                                ;Total number of iterations over 50ms store
+                             d in A
 
 010C                  22             delay1:
 
@@ -118,9 +119,9 @@ LOC  OBJ            LINE     SOURCE
 
 0136 F590             54                     mov P1,A
 
-0138 3100             55                     acall delay_
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 23:57:10 PAGE     2
 
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     2
+0138 3100             55                     acall delay_
 
 013A 759000           56                     mov P1,#00H
 
@@ -162,7 +163,8 @@ LOC  OBJ            LINE     SOURCE
 
                       75     
 
-0153                  76     write_nibble:                   ;Lower nibble in 53h and write location in r0
+0153                  76     write_nibble:                                   ;Lower nibble in 53h and write location in 
+                             r0
 
 0153 C3               77                     clr c
 
@@ -196,11 +198,11 @@ LOC  OBJ            LINE     SOURCE
 
 0165 75D008           92                     mov psw,#08H
 
-0168 AA50             93             mov r2,50h ; N
+0168 AA50             93             mov r2,50h                                      ;N
 
-016A A951             94             mov r1,51h ; Read pointer
+016A A951             94             mov r1,51h                                      ;Read pointer
 
-016C A852             95             mov r0,52h ; Write pointer      
+016C A852             95             mov r0,52h                                      ;Write pointer  
 
                       96             
 
@@ -208,13 +210,13 @@ LOC  OBJ            LINE     SOURCE
 
 016E E7               98                     mov A,@r1
 
-016F 54F0             99                     anl A,#0F0H             ; higher nibble saved , rest all bits to 0
+016F 54F0             99                     anl A,#0F0H                     ;higher nibble saved , rest all bits to 0
 
 0171 C4              100                     swap A
 
 0172 F553            101                     mov 53h,A
 
-0174 3153            102                     acall write_nibble ; 53 is reserved for its argument parameter
+0174 3153            102                     acall write_nibble              ;53 is reserved for its argument parameter
 
 0176 08              103                     inc r0
 
@@ -222,7 +224,7 @@ LOC  OBJ            LINE     SOURCE
 
 0177 740F            105                     mov A,#0FH
 
-0179 57              106                     anl A,@r1 ; Lower order bits recovered
+0179 57              106                     anl A,@r1                               ;Lower order bits recovered
 
 017A F553            107                     mov 53h,A
 
@@ -250,16 +252,16 @@ LOC  OBJ            LINE     SOURCE
 
 0185 7581C7          119             mov sp,#0C7H
 
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 23:57:10 PAGE     3
+
 0188 751253          120             mov 12H,#53H
 
                      121             
 
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     3
+018B 75900F          122             mov P1,#0FH                                     ;First configure switches as input 
+                             and LED’s as output
 
-018B 75900F          122             mov P1,#0FH                             ;First configure switches as input and LED’
-                             s as output
-
-018E 31DD            123             acall lcd_init                  ;initialise LCD
+018E 31DD            123             acall lcd_init                          ;initialise LCD
 
 0190 514D            124             acall delay
 
@@ -273,33 +275,34 @@ LOC  OBJ            LINE     SOURCE
 
                      129             
 
-0196 7480            130             mov   a,#80h                    ;Put cursor on first row,0 column
+0196 7480            130             mov   a,#80h                            ;Put cursor on first row,0 column
 
-0198 511A            131             acall lcd_command               ;send command to LCD
+0198 511A            131             acall lcd_command                       ;send command to LCD
 
 019A 514D            132             acall delay
 
-019C 900300          133             mov  dptr,#my_string    ;Load DPTR with sring1 Addr
+019C 900300          133             mov  dptr,#my_string            ;Load DPTR with sring1 Addr
 
-019F 513A            134             acall lcd_sendstring    ;call text strings sending routine
+019F 513A            134             acall lcd_sendstring            ;call text strings sending routine
 
 01A1 514D            135             acall delay
 
                      136     
 
-01A3 850A50          137             mov 50H,10D                             ;wait for 5 sec
+01A3 850A50          137             mov 50H,10D                                     ;wait for 5 sec
 
 01A6 3100            138             acall delay_
 
                      139             
 
-01A8 3143            140             acall packNibble                ;Read 8 bit value using subroutine packNibbles
+01A8 3143            140             acall packNibble                        ;Read 8 bit value using subroutine packNibb
+                             les
 
                      141             
 
                      142             ;;;;;;;;
 
-01AA 755001          143             mov 50H,#1                              ;Parsing the memloc
+01AA 755001          143             mov 50H,#1                                      ;Parsing the memloc
 
 01AD 75514F          144             mov 51H,#4FH
 
@@ -313,12 +316,12 @@ LOC  OBJ            LINE     SOURCE
 
 01B8 A84F            149             mov r0,4FH
 
-01BA 864F            150             mov 4FH,@r0                             ;Storing the value inside the location stor
-                             ed in 4FH
+01BA 864F            150             mov 4FH,@r0                                     ;Storing the value inside the locat
+                             ion stored in 4FH
 
                      151             
 
-01BC 755001          152             mov 50H,#1                              ;Parsing the memloc
+01BC 755001          152             mov 50H,#1                                      ;Parsing the memloc
 
 01BF 75514F          153             mov 51H,#4FH
 
@@ -332,9 +335,10 @@ LOC  OBJ            LINE     SOURCE
 
                      158             
 
-                     159             ;Display the value of memory address and content in Hex on LCD
+                     159                                                                     ;Display the value of memor
+                             y address and content in Hex on LCD
 
-01CA 74C5            160             mov a,#0C5H                              ;Put cursor on second row,0 column
+01CA 74C5            160             mov a,#0C5H                                     ;Put cursor on second row,0 column
 
 01CC 511A            161             acall lcd_command
 
@@ -342,8 +346,8 @@ LOC  OBJ            LINE     SOURCE
 
 01D0 7860            163             mov   r0,#60H
 
-01D2 5144            164             acall lcd_sendstring_name;eg: Display "12 53"  where memory location 12H contains v
-                             alue 53H
+01D2 5144            164             acall lcd_sendstring_name       ;eg: Display "12 53"  where memory location 12H con
+                             tains value 53H
 
                      165             
 
@@ -377,6 +381,8 @@ LOC  OBJ            LINE     SOURCE
 
 01E4 D282            180              setb  LCD_en         ;Enable H->L
 
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 23:57:10 PAGE     4
+
 01E6 514D            181                      acall delay
 
 01E8 C282            182              clr   LCD_en
@@ -384,8 +390,6 @@ LOC  OBJ            LINE     SOURCE
 01EA 514D            183                  acall delay
 
                      184     
-
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     4
 
 01EC 75A00C          185              mov   LCD_data,#0CH  ;Display on, Curson off
 
@@ -494,21 +498,23 @@ LOC  OBJ            LINE     SOURCE
 
 023A                 237     lcd_sendstring:
 
-023A E4              238              clr   a                 ;clear Accumulator for any previous data
+023A E4              238              clr   a                  ;clear Accumulator for any previous data
 
-023B 93              239              movc  a,@a+dptr         ;load the first character in accumulator
+023B 93              239              movc  a,@a+dptr          ;load the first character in accumulator
 
-023C 6005            240              jz    exit              ;go to exit if zero
+023C 6005            240              jz    exit               ;go to exit if zero
 
-023E 5129            241              acall lcd_senddata      ;send first char
+023E 5129            241              acall lcd_senddata       ;send first char
 
-0240 A3              242              inc   dptr              ;increment data pointer
+0240 A3              242              inc   dptr               ;increment data pointer
 
-0241 80F7            243              sjmp  LCD_sendstring    ;jump back to send the next character
+0241 80F7            243              sjmp  LCD_sendstring     ;jump back to send the next character
 
 0243                 244     exit:
 
-0243 22              245              ret                     ;End of routine
+0243 22              245              ret                      ;End of routine
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 23:57:10 PAGE     5
 
                      246                      
 
@@ -516,21 +522,19 @@ LOC  OBJ            LINE     SOURCE
 
 0244                 248     lcd_sendstring_name:
 
-0244 E6              249              mov   a,@r0             ;load the first character in accumulator
-
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     5
+0244 E6              249              mov   a,@r0              ;load the first character in accumulator
 
 0245 6005            250              jz    exit2              ;go to exit if zero
 
-0247 5129            251              acall lcd_senddata      ;send first char
+0247 5129            251              acall lcd_senddata       ;send first char
 
-0249 08              252              inc   r0               ;increment register
+0249 08              252              inc   r0                 ;increment register
 
 024A 80F8            253              sjmp  LCD_sendstring_name    ;jump back to send the next character
 
 024C                 254     exit2:
 
-024C 22              255              ret                     ;End of routine
+024C 22              255              ret                      ;End of routine
 
                      256     
 
@@ -571,7 +575,7 @@ LOC  OBJ            LINE     SOURCE
 0314 6E00                    
                      272     end
 
-A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 12:15:24 PAGE     6
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/21/2017 23:57:10 PAGE     6
 
 SYMBOL TABLE LISTING
 ------ ----- -------

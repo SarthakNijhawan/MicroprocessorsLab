@@ -364,9 +364,9 @@
           <GroupName>Source Group 1</GroupName>
           <Files>
             <File>
-              <FileName>port1_input.asm</FileName>
+              <FileName>que1final.asm</FileName>
               <FileType>2</FileType>
-              <FilePath>.\port1_input.asm</FilePath>
+              <FilePath>..\que1final.asm</FilePath>
             </File>
           </Files>
         </Group>
