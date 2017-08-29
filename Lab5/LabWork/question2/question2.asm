@@ -22,26 +22,24 @@ main:
 	stop: sjmp stop
 
 org 200H
-debounce:
-	mov  A,P1
-	cjne A,4FH,new
+	;---------------------------------Timer0 Interrupt-------------------------
+timer_int1:						;Current stable value at 4FH and prev stable value at 4EH
+	mov  A,P1					;Taking the input from port 1
+	anl  A,#0FH
+	cjne A,4FH,new				;First check from the current acceptable value
+	mov 4EH,4FH					;Prev state is same as current
 	sjmp term
 	new:
-		mov  A,P1
-		cjne A,4EH,new2
-		mov 4FH,4EH
+		cjne A,4DH,new2			;If already occured then 4FH = 4EH
+		mov  4EH,4FH			;4EH now stores the previous stable state
+		mov  4FH,4DH			;4FH, current state changes
 		sjmp term
 	new2:
-		mov 4EH,P1
+		mov 4DH,A				;If occurs for the first time
+		mov 4EH,4FH
 	term:
-		;mov P1,#0FH
+		mov P1,#0FH				;Setting the port for input again
 		mov TH1,#64H
-ret
-
-
-
-timer_int1:			
-	acall debounce				;Final acceptable value at 4FH
 reti
 
 end
