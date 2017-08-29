@@ -1,0 +1,119 @@
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/28/2017 07:59:37 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.5.0
+OBJECT MODULE PLACED IN .\Objects\question2.obj
+ASSEMBLER INVOKED BY: C:\Keil_v5\C51\BIN\A51.EXE question2.asm SET(SMALL) DEBUG PRINT(.\Listings\question2.lst) OBJECT(.
+                      \Objects\question2.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     ;Debouncing os switches
+
+0000                   2     org 00H
+
+0000 02010B            3     ljmp main
+
+                       4     
+
+001B                   5     org 01BH
+
+001B 020200            6     ljmp timer_int1
+
+                       7     
+
+0100                   8     org 100H
+
+0100                   9     start_timer:
+
+0100 758910           10             mov TMOD,#10H
+
+0103 75A888           11             mov IE,#88H
+
+0106 C28F             12             clr TF1
+
+0108 D28E             13             setb TR1
+
+010A 22               14     ret
+
+                      15     
+
+                      16     
+
+010B                  17     main:
+
+010B 75900F           18             mov P1,#0FH                                     ;Set the pins as input
+
+010E 85904F           19             mov 4FH,P1                                      ;Prev value stored in 4FH
+
+0111 3100             20             acall start_timer
+
+                      21             
+
+0113 80FE             22             stop: sjmp stop
+
+                      23     
+
+0200                  24     org 200H
+
+0200                  25     timer_int1:                                             ;Final acceptable value at 4FH
+
+0200 E590             26             mov  A,P1
+
+0202 B54F02           27             cjne A,4FH,new
+
+0205 800D             28             sjmp term
+
+0207                  29             new:
+
+0207 E590             30                     mov  A,P1
+
+0209 B54E05           31                     cjne A,4EH,new2
+
+020C 854E4F           32                     mov 4FH,4EH
+
+020F 8003             33                     sjmp term
+
+0211                  34             new2:
+
+0211 85904E           35                     mov 4EH,P1
+
+0214                  36             term:
+
+                      37                     ;mov P1,#0FH
+
+0214 758D64           38                     mov TH1,#64H
+
+0217 32               39     reti
+
+                      40     
+
+                      41     end
+
+A51 MACRO ASSEMBLER  QUESTION2                                                            08/28/2017 07:59:37 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+IE . . . . . . . .  D ADDR   00A8H   A   
+MAIN . . . . . . .  C ADDR   010BH   A   
+NEW. . . . . . . .  C ADDR   0207H   A   
+NEW2 . . . . . . .  C ADDR   0211H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+START_TIMER. . . .  C ADDR   0100H   A   
+STOP . . . . . . .  C ADDR   0113H   A   
+TERM . . . . . . .  C ADDR   0214H   A   
+TF1. . . . . . . .  B ADDR   0088H.7 A   
+TH1. . . . . . . .  D ADDR   008DH   A   
+TIMER_INT1 . . . .  C ADDR   0200H   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR1. . . . . . . .  B ADDR   0088H.6 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

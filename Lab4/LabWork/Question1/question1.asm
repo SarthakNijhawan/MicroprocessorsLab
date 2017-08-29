@@ -117,9 +117,9 @@ main:
 	mov @r0,#3DH
 	
 	mov r0,#90H				;90H -> "R012="
-	mov @r0,#52H
+	mov @r0,#'R'
 	inc r0
-	mov @r0,#30H
+	mov @r0,#'0'
 	inc r0
 	mov @r0,#31H
 	inc r0

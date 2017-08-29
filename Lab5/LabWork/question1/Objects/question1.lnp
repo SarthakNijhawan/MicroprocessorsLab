@@ -1,3 +1,3 @@
-".\Objects\time_on_lcd.obj" 
+".\Objects\question1.obj" 
 TO ".\Objects\question1" 
 PRINT(".\Listings\question1.m51") RAMSIZE(256) 
