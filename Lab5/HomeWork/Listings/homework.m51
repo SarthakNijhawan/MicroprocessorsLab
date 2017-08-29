@@ -1,4 +1,4 @@
-BL51 BANKED LINKER/LOCATER V6.22                                                        08/22/2017  14:09:20  PAGE 1
+BL51 BANKED LINKER/LOCATER V6.22                                                        08/27/2017  23:32:53  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V6.22, INVOKED BY:
@@ -17,9 +17,11 @@ LINK MAP OF MODULE:  .\Objects\homework (HOMEWORK)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+                    0008H     0008H                  *** GAP ***
+            REG     0010H     0008H     ABSOLUTE     "REG BANK 2"
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
-            CODE    0000H     0207H     ABSOLUTE     
+            CODE    0000H     020EH     ABSOLUTE     
 
 
 
@@ -31,38 +33,45 @@ SYMBOL TABLE OF MODULE:  .\Objects\homework (HOMEWORK)
   -------         MODULE        HOMEWORK
   D:00A8H         SYMBOL        IE
   C:0200H         SYMBOL        ISR1
-  C:0110H         SYMBOL        MAIN
+  C:0117H         SYMBOL        MAIN
   D:0090H         SYMBOL        P1
-  C:0206H         SYMBOL        SKIP
-  C:0115H         SYMBOL        STOP
+  D:00D0H         SYMBOL        PSW
+  C:020BH         SYMBOL        SKIP
+  C:011CH         SYMBOL        STOP
   B:0088H.5       SYMBOL        TF0
   D:0089H         SYMBOL        TMOD
   C:0100H         SYMBOL        TOGGLE_LED
   B:0088H.4       SYMBOL        TR0
   C:0000H         LINE#         3
   C:000BH         LINE#         6
-  C:0100H         LINE#         10
-  C:0103H         LINE#         11
-  C:0106H         LINE#         12
-  C:0109H         LINE#         13
+  C:0100H         LINE#         11
+  C:0102H         LINE#         12
+  C:0105H         LINE#         13
+  C:0108H         LINE#         14
   C:010BH         LINE#         15
-  C:010DH         LINE#         16
-  C:010FH         LINE#         18
-  C:0110H         LINE#         22
-  C:0113H         LINE#         23
-  C:0115H         LINE#         24
-  C:0200H         LINE#         28
-  C:0202H         LINE#         29
-  C:0204H         LINE#         30
-  C:0206H         LINE#         32
+  C:010EH         LINE#         16
+  C:0110H         LINE#         18
+  C:0112H         LINE#         19
+  C:0114H         LINE#         20
+  C:0116H         LINE#         21
+  C:0117H         LINE#         25
+  C:011AH         LINE#         26
+  C:011CH         LINE#         27
+  C:0200H         LINE#         32
+  C:0202H         LINE#         33
+BL51 BANKED LINKER/LOCATER V6.22                                                      08/27/2017  23:32:53  PAGE 2
+
+
+  C:0205H         LINE#         34
+  C:0207H         LINE#         35
+  C:0209H         LINE#         36
+  C:020BH         LINE#         38
+  C:020DH         LINE#         39
   -------         ENDMOD        HOMEWORK
 
 ******************************************************************************
-* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0024H BYTE ( 1%) *
-BL51 BANKED LINKER/LOCATER V6.22                                                      08/22/2017  14:09:20  PAGE 2
-
-
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0032H BYTE ( 2%) *
 ******************************************************************************
 
-Program Size: data=8.0 xdata=0 code=519
+Program Size: data=16.0 xdata=0 code=526
 LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

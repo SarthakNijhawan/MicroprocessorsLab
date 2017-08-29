@@ -1,4 +1,4 @@
-A51 MACRO ASSEMBLER  HOMEWORK                                                             08/22/2017 14:09:20 PAGE     1
+A51 MACRO ASSEMBLER  HOMEWORK                                                             08/27/2017 23:32:53 PAGE     1
 
 
 MACRO ASSEMBLER A51 V8.2.5.0
@@ -12,7 +12,7 @@ LOC  OBJ            LINE     SOURCE
 
 0000                   2     org 00h
 
-0000 020110            3     ljmp main
+0000 020117            3     ljmp main
 
                        4     
 
@@ -24,59 +24,73 @@ LOC  OBJ            LINE     SOURCE
 
 0100                   8     org 100h
 
-0100                   9     toggle_led:                                     ;Input parameter at 4FH => Timer Count 
+0100                   9     toggle_led:                                     ;Input parameter at 4FH => Timer Count
 
-0100 758901           10             mov TMOD,#01H
+                      10             using 2
 
-0103 75A882           11             mov IE,#82H
+0100 C0D0             11                     push psw
 
-0106 759000           12             mov P1,#00H
+0102 75D010           12                     mov psw,#10H
 
-0109 A84F             13             mov r0,4FH
+0105 758901           13             mov TMOD,#01H
 
-                      14             
+0108 75A882           14             mov IE,#82H
 
-010B C28D             15             clr tf0
+010B 759000           15             mov P1,#00H
 
-010D D28C             16             setb tr0                                ;Starting the timer
+010E A84F             16             mov r0,4FH
 
                       17             
 
-010F 22               18     ret
+0110 C28D             18             clr tf0
 
-                      19     
+0112 D28C             19             setb tr0                                ;Starting the timer
 
-                      20     
+0114 D0D0             20             pop psw
 
-0110                  21     main:
+0116 22               21     ret
 
-0110 754F0F           22             mov 4FH,#15                             ;At 16 the timer is close to 1 second
+                      22     
 
-0113 3100             23             acall toggle_led
+                      23     
 
-0115 80FE             24             stop: sjmp stop
+0117                  24     main:
 
-                      25             
+0117 754F1E           25             mov 4FH,#30                             ;At 30 the timer is close to 1 second
 
-0200                  26     org 200h
+011A 3100             26             acall toggle_led
 
-0200                  27     isr1:
+011C 80FE             27             stop: sjmp stop
 
-0200 D804             28             djnz r0,skip
+                      28             
 
-0202 B297             29             cpl P1.7
+0200                  29     org 200h
 
-0204 A84F             30             mov r0,4FH
+0200                  30     isr1:
 
-0206                  31             skip:
+                      31             using 2
 
-0206 32               32                     reti
+0200 C0D0             32                     push psw
 
-                      33     
+0202 75D010           33                     mov psw,#10H
 
-                      34     end
+0205 D804             34             djnz r0,skip
 
-A51 MACRO ASSEMBLER  HOMEWORK                                                             08/22/2017 14:09:20 PAGE     2
+0207 B297             35             cpl P1.7
+
+0209 A84F             36             mov r0,4FH
+
+020B                  37             skip:
+
+020B D0D0             38                     pop psw
+
+020D 32               39                     reti
+
+                      40     
+
+                      41     end
+
+A51 MACRO ASSEMBLER  HOMEWORK                                                             08/27/2017 23:32:53 PAGE     2
 
 SYMBOL TABLE LISTING
 ------ ----- -------
@@ -86,17 +100,18 @@ N A M E             T Y P E  V A L U E   ATTRIBUTES
 
 IE . . . . . . . .  D ADDR   00A8H   A   
 ISR1 . . . . . . .  C ADDR   0200H   A   
-MAIN . . . . . . .  C ADDR   0110H   A   
+MAIN . . . . . . .  C ADDR   0117H   A   
 P1 . . . . . . . .  D ADDR   0090H   A   
-SKIP . . . . . . .  C ADDR   0206H   A   
-STOP . . . . . . .  C ADDR   0115H   A   
+PSW. . . . . . . .  D ADDR   00D0H   A   
+SKIP . . . . . . .  C ADDR   020BH   A   
+STOP . . . . . . .  C ADDR   011CH   A   
 TF0. . . . . . . .  B ADDR   0088H.5 A   
 TMOD . . . . . . .  D ADDR   0089H   A   
 TOGGLE_LED . . . .  C ADDR   0100H   A   
 TR0. . . . . . . .  B ADDR   0088H.4 A   
 
 
-REGISTER BANK(S) USED: 0 
+REGISTER BANK(S) USED: 0 2 
 
 
 ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
