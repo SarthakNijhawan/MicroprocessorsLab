@@ -14,8 +14,8 @@ org 1BH
 ljmp timer_int1
 
 org 100H
-init_clock:
-	mov 70H,#31H
+init_clock:						;Initialises the clock
+	mov 70H,#31H				
 	mov 71H,#32H
 	mov 72H,#':'
 	mov 73H,#35H
@@ -30,13 +30,11 @@ init_clock:
 ret
 
 start_timers:
-	mov r7,#30D
-	mov TMOD,#11H
+	mov r7,#30D					;To ensure one sec delay
+	mov TMOD,#11H				;T0,T1 -> mode 1
 	mov TCON,#00H
 	mov IE,#8AH
 	setb PT1					;Setting higher priority to timer1 than timer0
-	clr TF0
-	clr TF1
 	setb TR0
 	setb TR1
 ret
@@ -167,9 +165,6 @@ loop1:	 djnz r1, loop1
 	
 org 300H
 update_mm_sec:
-	push psw
-	push acc
-	
 	clr A
 	cjne @r0,#39H,skip_
 	mov @r0,#30H
@@ -181,9 +176,6 @@ update_mm_sec:
 	skip_:
 		inc @r0
 	terminate:
-
-	pop acc
-	pop psw
 ret
 
 update_hh:
@@ -220,26 +212,9 @@ update_time:
 	terminate_:
 ret
 
+
 ;-------------------------------------Timer0 Interrupt------------------------------------
 timer_int0:
-	clock_setup:
-		mov A,4FH				;Current State from 4FH
-		jnb 0E0H,skip
-		xrl A,4EH
-		mov B,A
-			jnb 0F1H,min
-			mov r0,#77H
-			acall update_mm_sec
-		min:
-			jnb 0F2H,hh
-			mov r0,#74H
-			acall update_mm_sec
-		hh:
-			jnb 0F3H,clock_setup
-			mov r0,#71H
-			acall update_hh
-	sjmp clock_setup
-	skip:
 		djnz r7,term_int
 		acall update_time
 		mov r7,#30
@@ -256,18 +231,40 @@ timer_int1:						;Current stable value at 4FH and prev stable value at 4EH
 	anl  A,#0FH
 	cjne A,4FH,new				;First check from the current acceptable value
 	mov 4EH,4FH					;Prev state is same as current
-	sjmp term
+	sjmp check
 	new:
 		cjne A,4DH,new2			;If already occured then 4FH = 4EH
 		mov  4EH,4FH			;4EH now stores the previous stable state
 		mov  4FH,4DH			;4FH, current state changes
-		sjmp term
+		sjmp check
 	new2:
 		mov 4DH,A				;If occurs for the first time
 		mov 4EH,4FH
+	check:
+		mov A,4FH				;Current State
+		jnb 0E0H,enable
+		clr TR0					;Stopping the timer
+		xrl A,4EH
+		mov B,A
+			jnb B.1,min
+			mov r0,#77H
+			acall update_mm_sec
+		min:
+			jnb B.2,hh
+			mov r0,#74H
+			acall update_mm_sec
+		hh:
+			jnb B.3,term
+			mov r0,#71H
+			acall update_hh
+			
+		sjmp term
+	enable:	
+		setb TR0				;Restarting T0
 	term:
 		mov P1,#0FH				;Setting the port for input again
 		mov TH1,#64H
+		
 		
 	pop acc
 	pop psw
