@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\temp.obj" 
+TO ".\Objects\question3" 
+PRINT(".\Listings\question3.m51") RAMSIZE(256) 

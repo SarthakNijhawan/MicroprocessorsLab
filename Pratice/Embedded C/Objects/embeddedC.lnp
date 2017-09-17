@@ -1,0 +1,4 @@
+".\Objects\STARTUP.obj",
+".\Objects\IO_1.obj" 
+TO ".\Objects\embeddedC" 
+PRINT(".\Listings\embeddedC.m51") RAMSIZE(256) 

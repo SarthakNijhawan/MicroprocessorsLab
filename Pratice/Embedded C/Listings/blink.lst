@@ -1,0 +1,50 @@
+C51 COMPILER V9.56.0.0   BLINK                                                             08/30/2017 12:32:46 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE BLINK
+OBJECT MODULE PLACED IN .\Objects\blink.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE blink.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\bli
+                    -nk.lst) TABS(2) OBJECT(.\Objects\blink.obj)
+
+line level    source
+
+   1          // This program flashes the P1.4 RED LED on the Pt-51 target board at interval of 1 sec   
+   2          
+   3          #include <AT89C5131.h>            // All SFR declarations for AT89C5131
+   4          
+   5          sbit LED=P1^7;                // assigning label to P1^4 as "LED"
+   6          
+   7          void delayms(unsigned int ms_sec);
+   8          
+   9          void main (void){
+  10   1        P1=0x07F;               // port pin P1.3 as output
+  11   1        LED=0;                  // Initialise LED to 0;
+  12   1        while(1){
+  13   2          LED=~LED;
+  14   2          delayms(1000);            // Calls delay
+  15   2        }
+  16   1      }
+  17          
+  18          void delayms(unsigned int ms_sec){
+  19   1        unsigned int i,j;
+  20   1      
+  21   1        for (i = 0; i < ms_sec; ++i)
+  22   1        {
+  23   2          for (j = 0; j < 355; ++j);      //This loop runs 355 times which approximately gives 1ms delay with 24MHz s
+             -ystem clock.
+  24   2        }
+  25   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     48    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

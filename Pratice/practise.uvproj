@@ -362,13 +362,6 @@
       <Groups>
         <Group>
           <GroupName>Source Group 1</GroupName>
-          <Files>
-            <File>
-              <FileName>que1final.asm</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\que1final.asm</FilePath>
-            </File>
-          </Files>
         </Group>
       </Groups>
     </Target>
