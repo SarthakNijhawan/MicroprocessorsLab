@@ -1,0 +1,82 @@
+C51 COMPILER V9.56.0.0   HOMEWORK                                                          09/17/2017 07:03:52 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE HOMEWORK
+OBJECT MODULE PLACED IN .\Objects\homework.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE homework.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -homework.lst) TABS(2) OBJECT(.\Objects\homework.obj)
+
+line level    source
+
+   1          #include "at89c5131.h"
+   2          
+   3          sbit LED = P1^7;            // Alias for 7th pin on port1
+   4          sbit LED_parity = P1^6;         // Alias for 6th pin on port1
+   5          sbit parity = PSW^0;          // Parity bit
+   6          sfr IE = 0xA8;
+   7          
+   8          void delay_ms(int delay)
+   9          {
+  10   1        int d=0;
+  11   1        while(delay>0)
+  12   1        {
+  13   2          for(d=0;d<382;d++);
+  14   2          delay--;
+  15   2        }
+  16   1      }
+  17          
+  18          // Template for homework on UART
+  19          void ISR_Serial(void) interrupt 4
+  20          {
+  21   1        //ISR for serial interrupt
+  22   1        TI = 0;
+  23   1        LED = ~LED;             // Toggle the LED
+  24   1        delay_ms(1000);
+  25   1        ACC = 'A';              // To set the parity bit accordingly
+  26   1        TB8 = parity;
+  27   1        LED_parity = parity;
+  28   1        SBUF = ACC;
+  29   1        
+  30   1      }
+  31          
+  32          void init_serial()
+  33          {
+  34   1        //Initialize serial communication and interrupts
+  35   1      
+  36   1        TMOD = 0x20;            // Timer1 in mode 2
+  37   1        IE = 0x90;              // Setting up the serial interrupts
+  38   1        SCON = 0xC0;            // REN = 0, to ensure only trnasmission takes place, serial in mode 3
+  39   1        TH1 = -24;              // To ensure 1200 baud rate
+  40   1        TR1 = 1;              // Initiate the timer
+  41   1      
+  42   1      }
+  43          
+  44          void main()
+  45          {
+  46   1        init_serial();
+  47   1        P1 = 0;
+  48   1        LED = 1;              // Switching on the LED
+  49   1        
+  50   1        ACC = 'A';
+  51   1        TB8 = parity;
+  52   1        LED_parity = parity;
+  53   1        SBUF = ACC;
+  54   1      
+C51 COMPILER V9.56.0.0   HOMEWORK                                                          09/17/2017 07:03:52 PAGE 2   
+
+  55   1        while(1);
+  56   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    121    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
