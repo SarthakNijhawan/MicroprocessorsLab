@@ -1,20 +1,20 @@
 #include "at89c5131.h"
-#include <string>
 #include "stdio.h"
-
 
 /* Functions Declaration */
 void ISR_serial(void);
 void init_serial();
-unsigned char receive_data(void);
+char receive_data(void);
 void transmit_data(unsigned char str);
-void transmit_string(char* str, n);
+void transmit_string(char* str, int n);
+void delay_ms(int delay);
 
 
 void SPI_Init();
 char int_to_string(int val);
 
 sfr IE=0xA8;
+sbit parity_bit = PSW^0;
 
 sbit CS_BAR = P1^4;									// Chip Select for the ADC
 sbit ONULL = P1^0;
@@ -25,13 +25,13 @@ unsigned int adcVal=0, avgVal=0, initVal=0, adcValue = 0, tempVal = 0;
 unsigned char serial_data;
 unsigned char data_save_high;
 unsigned char data_save_low;
-unsigned char timer_count=0, i=0, samples_counter=0;
+unsigned char i=0, samples_counter=0;
 unsigned char voltage[3];
 
-char* string1 = "Press Y to start sampling the data";
-char* string2 = "To stop sampling press N";
-char* string3 = "Temperature: ";
-unsigned char received_data;
+char* string1 = "Press Y to start sampling the data\n";
+char* string2 = "To stop sampling press N\n";
+char* string3 = "Temperature: \n";
+char received_data;
 
 //=========================================================
 				/* Main Function */
@@ -44,14 +44,14 @@ unsigned char received_data;
                      P1.6(SCK)
  */
 
-void main(){
-	P1 &= 0xEF;											// Make P1 Pin4-7 output
+void main(){	
 	
 	SPI_Init();
+	init_serial();
 	
 	while(1){
-		transmit_string(string1, 34);					// "Press Y to start ....."
-		received_data = received_data();
+		transmit_string(string1, 35);					// "Press Y to start ....."
+		received_data = receive_data();
 		
 		if(received_data == 'Y') break;
 	}
@@ -85,7 +85,6 @@ void main(){
 		else{
 			samples_counter=0;
 			avgVal = adcValue/20;			//Average
-			sample=0;						//Stop sampling
 			adcValue=0;
 			voltage[0]=avgVal/100;
 			voltage[0]%=10;
@@ -95,14 +94,14 @@ void main(){
 			voltage[2]%=10;
 		}
 
-		transmit_string(string3, 13);
+		transmit_string(string3, 14);
 		for(i=0; i<3; i++){
 			transmit_data(int_to_string(voltage[i]));
 		}
 
-		transmit_string(string2, 24);
+		transmit_string(string2, 25);
 
-		received_data = received_data();
+		received_data = receive_data();
 		if(received_data == 'N') break;
   }
 
@@ -122,21 +121,17 @@ void init_serial()
 }
 
 
-unsigned char receive_data(void)
+char receive_data(void)
 {
 	//function to receive data over RxD pin.
 	char rec_data;
-	int d=0;
-	for(i=0; i<2000; i++)
-	{
-		for(d=0; d<382; d++){
-			if(RI==1){
-				rec_data = SBUF;
-				RI=0;
-				return rec_data;
-			}
-
-		}
+	unsigned int d=0;
+	
+	delay_ms(2000);
+ 	if(RI==1){
+		rec_data = SBUF;
+		RI=0;
+		return rec_data;
 	}
 
 	return 'A';							// Arbitrarily setting the return value to 'A'
@@ -148,14 +143,15 @@ void transmit_data(unsigned char str)
 {
 	//function to transmit data over TxD pin.
 	TI=0;
-	SBUF = str;
+	ACC = str;
+	TB8 = parity_bit;
+	SBUF = ACC;
 	while(TI==0);						// Wait till data gets trnasmitted fully
 	TI=0;
-
 }
 
 
-void transmit_string(char* str, n)
+void transmit_string(char* str, int n)
 {
 	//function to transmit string of size n over TxD pin.
 	for(i=0; i<n; i++) transmit_data(str[i]);
@@ -213,8 +209,13 @@ void SPI_Init()
 	EA=1;                         	// enable interrupts 
 	SPCON |= 0x40;                	// run spi;ENABLE SPI INTERFACE SPEN= 1 
 }
-	/**
- * FUNCTION_PURPOSE:Timer Initialization
- * FUNCTION_INPUTS: void
- * FUNCTION_OUTPUTS: none
- */
+
+void delay_ms(int delay)
+{
+	int d=0;
+	while(delay>0)
+	{
+		for(d=0;d<382;d++);
+		delay--;
+	}
+}

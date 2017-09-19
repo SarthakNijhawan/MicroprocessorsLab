@@ -2,7 +2,7 @@
 
 sbit LED = P1^7;						// Alias for 7th pin on port1
 sbit LED_parity = P1^6;					// Alias for 6th pin on port1
-sbit parity = PSW^0;					// Parity bit
+sbit parity_flag = PSW^0;					// Parity bit
 sfr IE = 0xA8;
 
 void delay_ms(int delay)
@@ -23,10 +23,9 @@ void ISR_Serial(void) interrupt 4
 	LED = ~LED;							// Toggle the LED
 	delay_ms(1000);
 	ACC = 'A';							// To set the parity bit accordingly
-	TB8 = parity;
-	LED_parity = parity;
+	TB8 = parity_flag;
+	LED_parity = parity_flag;
 	SBUF = ACC;
-	
 }
 
 void init_serial()
@@ -48,8 +47,8 @@ void main()
 	LED = 1;							// Switching on the LED
 	
 	ACC = 'A';
-	TB8 = parity;
-	LED_parity = parity;
+	TB8 = parity_flag;
+	LED_parity = parity_flag;
 	SBUF = ACC;
 
 	while(1);
