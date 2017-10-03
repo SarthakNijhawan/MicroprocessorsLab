@@ -9,7 +9,7 @@
 
 void SPI_Init();
 void LCD_Init();
-// void Timer_Init();
+void Timer_Init();
 void LCD_DataWrite(char dat);
 void LCD_CmdWrite(char cmd);
 void LCD_StringWrite(char * str, unsigned char len);
@@ -38,7 +38,7 @@ unsigned int adcVal=0, avgVal=0, initVal=0, adcValue = 0, timerVal=0;
 unsigned char serial_data;
 unsigned char data_save_high;
 unsigned char data_save_low;
-unsigned char i=0, samples_counter=0; //, timer_count=30;
+unsigned char i=0, samples_counter=0;
 unsigned char temperature[3],time[3];
 
 unsigned int CT, del_T=50;
@@ -64,7 +64,7 @@ void main(void)
 	
 	SPI_Init();
 	LCD_Init();
-	// Timer_Init();
+	Timer_Init();
 	
 	/* First Line */
 	LCD_CmdWrite(0x81);
@@ -88,7 +88,7 @@ void main(void)
 		
 		if(PIN==1){  /* PIN is in mode SET */
 			DT=set();
-			// start_timer=1;	/* To start the timer on toggle */
+			start_timer=1;	/* To start the timer when set in run mode */
 			
 			/* Time is set to zero */
 			timerVal=0;			// Initial time value
@@ -107,9 +107,9 @@ void main(void)
 			delay_ms(500);
 		}
 		else{	/* PIN is in mode RUN */
-			// if(start_timer==1){
-			// 	TR0=1;	// Start timer for the first time mode is toggled from set to run
-			// }
+			if(start_timer==1){
+				TR0=1;	// Start timer for the first time mode is toggled from set to run
+			}
 			run();
 			delay_ms(1000);
 		}
@@ -145,7 +145,6 @@ int set(){	/* Reads ADC value from channel 0 */
 			samples_counter=0;
 			avgVal = adcValue/200;			//Average
 			adcValue=0;
-
 			if(avgVal < 5){
 				avgVal = 0;
 			}
@@ -166,6 +165,23 @@ int set(){	/* Reads ADC value from channel 0 */
 			}
 			avgVal+=35;	// Final Temperature Value
 
+
+			if( TR0 && (DT<avgVal) ){
+				TR0=0;
+				start_timer=1;
+				timerVal=(TH0<<8) + TL0;
+				split_into_characters(timerVal, 3, time);
+				timerVal=0;
+
+				LCD_CmdWrite(0xCC);
+				sdelay(100);
+
+				/* Updates the time */
+				for(i=0; i<3; i++){
+					temp = int_to_string(time[i]);
+					LCD_DataWrite(temp);
+				}
+			}
 
 			/* Splits the value into character array for Tx */
 			split_into_characters(avgVal, 3, &temperature);
@@ -218,7 +234,7 @@ void run(){	/* Reads from Channel 1 */
 
 			split_into_characters(avgVal, 3, temperature);
 
-			/* Writes on the second line below CT */
+			/* Writes on the second line below DT */
 			LCD_CmdWrite(0xC6);
 			sdelay(100);
 
@@ -230,26 +246,6 @@ void run(){	/* Reads from Channel 1 */
 		}
 
 		CT=avgVal;
-
-		// if( TR0 && (DT<avgVal) ){	/* Temperature reaches the DT */
-			// TR0=0;			/* 
-			// start_timer=0;	/* Won't allow the timer to run henceforth */
-		// }
-		/* Updating time */
-		if( DT > CT ){	/* Till the temperature reaches DT */
-			timerVal++;
-			split_into_characters(timerVal, 3, time);
-
-			LCD_CmdWrite(0xCC);
-			sdelay(100);
-
-			/* Updates the time */
-			for(i=0; i<3; i++){
-				temp = int_to_string(time[i]);
-				LCD_DataWrite(temp);
-			}
-		}
-
 
 		/* Regulate Temperature */
 		if( (DT+del_T) < CT ){
@@ -280,48 +276,6 @@ void init_control(){
 	/* Setting P1^0 as input */
 	PIN=1;
 }
-
-// void Timer_Init()
-// {
-// 	// Set Timer0 to work in up counting 16 bit mode. Counts upto 
-// 	// 65536 depending upon the calues of TH0 and TL0
-// 	// The timer counts 65536 processor cycles. A processor cycle is 
-// 	// 12 clocks. FOr 24 MHz, it takes 65536/2 uS to overflow
-    
-// 	TH0 = 0x00;							//Initialize TH0
-// 	TL0 = 0x00;							//Initialize TL0
-// 	TMOD = 0x01; 						//Configure TMOD 
-// 	// IE |= 0x82; 						//Set ET0
-// 	TR0 = 0;							//Set TR0
-// 	// timer_count = 30;
-// }
-
-// void timer0_ISR (void) interrupt 1			
-// {
-// 	//Initialize TH0
-// 	//Initialize TL0
-// 	//Increment Overflow 
-// 	//Write averaging of 10 samples code here
-
-	// if(timer_count==0){							// 100ms passed
-	// 	// One second completed
-	// 	timerVal++;
-	// 	split_into_characters(timerVal, 3, time);
-	// 	timerVal=0;
-
-	// 	LCD_CmdWrite(0xCC);
-	// 	sdelay(100);
-
-	// 	/* Updates the time */
-	// 	for(i=0; i<3; i++){
-	// 		temp = int_to_string(time[i]);
-	// 		LCD_DataWrite(temp);
-	// 	}
-
-// 		timer_count=30;
-// 	}
-// 	else timer_count--;
-// }
 
 /**
  * FUNCTION_PURPOSE:interrupt
@@ -371,7 +325,24 @@ void SPI_Init()
 	EA=1;                         	// enable interrupts 
 	SPCON |= 0x40;                	// run spi;ENABLE SPI INTERFACE SPEN= 1 
 }
+	/**
+ * FUNCTION_PURPOSE:Timer Initialization
+ * FUNCTION_INPUTS: void
+ * FUNCTION_OUTPUTS: none
+ */
 
+void Timer_Init()
+{
+	// Set Timer0 to work in up counting 16 bit mode. Counts upto 
+	// 65536 depending upon the calues of TH0 and TL0
+	// The timer counts 65536 processor cycles. A processor cycle is 
+	// 12 clocks. FOr 24 MHz, it takes 65536/2 uS to overflow
+    
+	TH0 = 0x00;							//Initialize TH0
+	TL0 = 0x00;							//Initialize TL0
+	TMOD = 0x01; 						//Configure TMOD 
+	TR0 = 0;							//Set TR0
+}
 
 
 /**
