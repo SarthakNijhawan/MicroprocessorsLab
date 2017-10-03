@@ -88,7 +88,7 @@ void main(void)
 		
 		if(PIN==1){  /* PIN is in mode SET */
 			DT=set();
-			start_timer=1;	/* To start the timer on toggle */
+			// start_timer=1;	/* To start the timer on toggle */
 			
 			/* Time is set to zero */
 			timerVal=0;			// Initial time value
@@ -145,6 +145,7 @@ int set(){	/* Reads ADC value from channel 0 */
 			samples_counter=0;
 			avgVal = adcValue/200;			//Average
 			adcValue=0;
+
 			if(avgVal < 5){
 				avgVal = 0;
 			}
@@ -217,7 +218,7 @@ void run(){	/* Reads from Channel 1 */
 
 			split_into_characters(avgVal, 3, temperature);
 
-			/* Writes on the second line below DT */
+			/* Writes on the second line below CT */
 			LCD_CmdWrite(0xC6);
 			sdelay(100);
 
@@ -228,11 +229,14 @@ void run(){	/* Reads from Channel 1 */
 			}
 		}
 
+		CT=avgVal;
+
 		// if( TR0 && (DT<avgVal) ){	/* Temperature reaches the DT */
 			// TR0=0;			/* 
 			// start_timer=0;	/* Won't allow the timer to run henceforth */
 		// }
-		if( DT > avgVal ){	/* Till the temperature reaches DT */
+		/* Updating time */
+		if( DT > CT ){	/* Till the temperature reaches DT */
 			timerVal++;
 			split_into_characters(timerVal, 3, time);
 
@@ -246,7 +250,6 @@ void run(){	/* Reads from Channel 1 */
 			}
 		}
 
-		CT=avgVal;
 
 		/* Regulate Temperature */
 		if( (DT+del_T) < CT ){
