@@ -30,7 +30,7 @@ unsigned char voltage[3];
 
 char* string1 = "Press Y to start sampling the data\n";
 char* string2 = "To stop sampling press N\n";
-char* string3 = "Temperature: \n";
+char* string3 = "Temperature: ";
 char received_data;
 
 //=========================================================
@@ -98,6 +98,7 @@ void main(){
 		for(i=0; i<3; i++){
 			transmit_data(int_to_string(voltage[i]));
 		}
+		transmit_data('\n');
 
 		transmit_string(string2, 25);
 
