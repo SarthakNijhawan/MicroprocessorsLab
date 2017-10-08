@@ -25,6 +25,11 @@ void split_into_characters(int number, char num_of_char, unsigned char* array);
 sfr IE=0xA8;
 char temp;
 
+sbit LED_debug_1 = P1^7;
+sbit LED_debug_2 = P1^6;
+sbit LED_debug_3 = P1^5;
+sbit LED_debug_4 = P1^4;
+
 sbit CS_BAR = P1^4;									// Chip Select for the ADC
 sbit LCD_rs = P0^0;  								// LCD Register Select
 sbit LCD_rw = P0^1;  								// LCD Read/Write
@@ -34,19 +39,20 @@ sbit ONULL = P1^0;
 bit transmit_completed= 0;							// To check if spi data transmit is complete
 bit offset_null = 0;								// Check if offset nulling is enabled
 bit roundoff = 0;
-unsigned int adcVal=0, avgVal=0, initVal=0, adcValue = 0, timerVal=0;
+unsigned int adcVal=0, avgVal=0, initVal=0, adcValue = 0; //, timerVal=0;
 unsigned char serial_data;
 unsigned char data_save_high;
 unsigned char data_save_low;
 unsigned char i=0, samples_counter=0;
-unsigned char temperature[3],time[3];
+unsigned char voltage[3]; //,time[3];
 
-unsigned int CT, del_T=50;
+unsigned int CT, del_T=5;
 unsigned int DT=35;
-bit start_timer=0;
-sbit PIN = P1^0;		// This is to check the mode of the Temperature Controller
+// unsigned int timer_cycles=0;
+// bit start_timer=0;
+sbit PIN = P1^3;		// This is to check the mode of the Temperature Controller
 sbit RELAY = P3^7;		// This pins drives the delay
-sbit LED = P3^6;		// just an LED
+//sbit LED = P1^5;		// just an LED
 
 /**
 
@@ -82,34 +88,47 @@ void main(void)
 	/* Control Signals Initialisation */
 	init_control();
 
-	LED=1;					// Is always kept in set mode
+	//LED=1;					// Is always kept in set mode
 
 	while(1){
+
+
 		
 		if(PIN==1){  /* PIN is in mode SET */
-			DT=set();
-			start_timer=1;	/* To start the timer when set in run mode */
+			// start_timer=1;	/* To start the timer when set in run mode */
 			
 			/* Time is set to zero */
-			timerVal=0;			// Initial time value
-			split_into_characters(timerVal, 3, time);
+			// timerVal=0;			// Initial time value
+			// timer_cycles=0;
+			// split_into_characters(timerVal, 3, time);
 
 			/* displaying time */	
-			LCD_CmdWrite(0xCC);
-			sdelay(100);
+			// LCD_CmdWrite(0xCC);
+			// sdelay(100);
 
-			for(i=0; i<3; i++){
-				temp = int_to_string(time[i]);
-				LCD_DataWrite(temp);
-			}
+			// for(i=0; i<3; i++){
+			// 	temp = int_to_string(time[i]);
+			// 	LCD_DataWrite(temp);
+			// }
+			LED_debug_1 = 1;
+			LED_debug_2 = 1;
+			LED_debug_3 = 1;
+			LED_debug_4 = 1;
+
+			DT=set();
 
 			/* Delay in Sampling */
 			delay_ms(500);
 		}
 		else{	/* PIN is in mode RUN */
-			if(start_timer==1){
-				TR0=1;	// Start timer for the first time mode is toggled from set to run
-			}
+			// if(start_timer==1){
+			// 	TR0=1;	// Start timer for the first time mode is toggled from set to run
+			// }
+
+			LED_debug_1 = 0;
+			LED_debug_2 = 0;
+			LED_debug_3 = 0;
+			LED_debug_4 = 0;
 			run();
 			delay_ms(1000);
 		}
@@ -149,7 +168,7 @@ int set(){	/* Reads ADC value from channel 0 */
 				avgVal = 0;
 			}
 			else if(5<avgVal && avgVal<15){
-				avgVal = 20;
+				avgVal = 10;
 			}
 			else if(15<avgVal && avgVal<25){
 				avgVal = 20;
@@ -165,33 +184,32 @@ int set(){	/* Reads ADC value from channel 0 */
 			}
 			avgVal+=35;	// Final Temperature Value
 
+			// if(start_timer==0){
+			// 	TR0=0;
+			// 	start_timer=1;
+			// 	timerVal=(TH0<<8) + TL0;
+			// 	split_into_characters(timerVal, 3, time);
+			// 	timerVal=0;
 
-			if( TR0 && (DT<avgVal) ){
-				TR0=0;
-				start_timer=1;
-				timerVal=(TH0<<8) + TL0;
-				split_into_characters(timerVal, 3, time);
-				timerVal=0;
+			// 	LCD_CmdWrite(0xCC);
+			// 	sdelay(100);
 
-				LCD_CmdWrite(0xCC);
-				sdelay(100);
-
-				/* Updates the time */
-				for(i=0; i<3; i++){
-					temp = int_to_string(time[i]);
-					LCD_DataWrite(temp);
-				}
-			}
+			// 	/* Updates the time */
+			// 	for(i=0; i<3; i++){
+			// 		temp = int_to_string(time[i]);
+			// 		LCD_DataWrite(temp);
+			// 	}
+			// }
 
 			/* Splits the value into character array for Tx */
-			split_into_characters(avgVal, 3, &temperature);
+			split_into_characters(avgVal, 3, &voltage);
 
 			/* Writes on the second line below DT */
 			LCD_CmdWrite(0xC0);
 			sdelay(100);
 
 			for(i=0; i<3; i++){
-				temp = int_to_string(temperature[i]);
+				temp = int_to_string(voltage[i]);
 				LCD_DataWrite(temp);
 			}
 		}
@@ -232,7 +250,7 @@ void run(){	/* Reads from Channel 1 */
 			avgVal = adcValue/20;			//Average
 			adcValue=0;
 
-			split_into_characters(avgVal, 3, temperature);
+			split_into_characters(avgVal, 3, &voltage);
 
 			/* Writes on the second line below DT */
 			LCD_CmdWrite(0xC6);
@@ -240,12 +258,43 @@ void run(){	/* Reads from Channel 1 */
 
 			/* Displays the current Tempearture */
 			for(i=0; i<3; i++){
-				temp = int_to_string(temperature[i]);
+				temp = int_to_string(voltage[i]);
 				LCD_DataWrite(temp);
 			}
 		}
 
+		// if( TR0 && (DT<avgVal) ){
+		// 		TR0=0;
+		// 		start_timer=1;
+		// 		timerVal=(TH0<<8) + TL0;
+		// 		split_into_characters(timerVal, 3, time);
+		// 		timerVal=0;
+
+		// 		LCD_CmdWrite(0xCC);
+		// 		sdelay(100);
+
+		// 		/* Updates the time */
+		// 		for(i=0; i<3; i++){
+		// 			temp = int_to_string(time[i]);
+		// 			LCD_DataWrite(temp);
+		// 		}
+		// 	}
+
 		CT=avgVal;
+
+		// if(DT > CT){
+		// 	LED=~LED;
+		// 	timerVal++;
+		// 	split_into_characters(CT, 3, time);
+		// 	/* displaying time */	
+		// 	LCD_CmdWrite(0xCC);
+		// 	sdelay(100);
+
+		// 	for(i=0; i<3; i++){
+		// 		temp = int_to_string(time[i]);
+		// 		LCD_DataWrite(temp);
+		// 	}
+		// }
 
 		/* Regulate Temperature */
 		if( (DT+del_T) < CT ){
@@ -258,6 +307,7 @@ void run(){	/* Reads from Channel 1 */
 		PIN=1;				// Ensure that PIN is set as an input pin
 		break;
 	}
+
 }
 
 void split_into_characters(unsigned int number, char num_of_char, unsigned char* array){

@@ -1,0 +1,406 @@
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 03:31:11 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE GOO_PROJ
+OBJECT MODULE PLACED IN .\Objects\goo_proj.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE goo_proj.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\
+                    -goo_proj.lst) TABS(2) OBJECT(.\Objects\goo_proj.obj)
+
+line level    source
+
+   1          #include "at89c5131.h"
+   2          #include "stdio.h"
+   3          #define LCD_data  P2                // LCD Data port
+   4          
+   5          void SPI_Init();
+   6          void LCD_Init();
+   7          // void Timer_Init();
+   8          void LCD_DataWrite(char dat);
+   9          void LCD_CmdWrite(char cmd);
+  10          void LCD_StringWrite(char * str, unsigned char len);
+  11          void LCD_Ready();
+  12          void sdelay(int delay);
+  13          void delay_ms(int delay);
+  14          // char int_to_string(int val);
+  15          // void init_control();
+  16          // int set();
+  17          // void run();
+  18          // void split_into_characters(int number, char num_of_char, unsigned char* array);
+  19          
+  20          sfr IE=0xA8;
+  21          
+  22          sbit LED_debug_1 = P1^7;
+  23          sbit LED_debug_2 = P1^6;
+  24          sbit LED_debug_3 = P1^5;
+  25          sbit LED_debug_4 = P1^4;
+  26          
+  27          sbit CS_BAR = P1^4;                 // Chip Select for the ADC
+  28          sbit LCD_rs = P0^0;                 // LCD Register Select
+  29          sbit LCD_rw = P0^1;                 // LCD Read/Write
+  30          sbit LCD_en = P0^2;                 // LCD Enable
+  31          sbit LCD_busy = P2^7;               // LCD Busy Flag
+  32          sbit ONULL = P1^0;
+  33          bit transmit_completed= 0;              // To check if spi data transmit is complete
+  34          bit offset_null = 0;                // Check if offset nulling is enabled
+  35          bit roundoff = 0;
+  36          unsigned int adcVal=0, avgVal=0, initVal=0, adcValue = 0; //, timerVal=0;
+  37          unsigned char serial_data;
+  38          unsigned char data_save_high;
+  39          unsigned char data_save_low;
+  40          unsigned char i=0, samples_counter=0;
+  41          unsigned char temp[3];
+  42          // unsigned char voltage[3]; //,time[3];
+  43          
+  44          // unsigned int CT, del_T=5;
+  45          // unsigned int DT=35;
+  46          // unsigned int timer_cycles=0;
+  47          // bit start_timer=0;
+  48          sbit PIN = P1^0;    // This is to check the mode of the Temperature Controller
+  49          // sbit RELAY = P3^7;   // This pins drives the delay
+  50          sbit LED = P3^6;    // just an LED
+  51          
+  52          
+  53          void main(void){
+  54   1        P3 = 0X00;                      // Make Port 3 output 
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 03:31:11 PAGE 2   
+
+  55   1        P2 = 0x00;                      // Make Port 2 output 
+  56   1        P1 &= 0xEF;                     // Make P1 Pin4-7 output
+  57   1        P0 &= 0xF0;                     // Make Port 0 Pins 0,1,2 output
+  58   1        
+  59   1        SPI_Init();
+  60   1        LCD_Init();
+  61   1        // Timer_Init();
+  62   1        
+  63   1        /* First Line */
+  64   1        LCD_CmdWrite(0x81);
+  65   1        sdelay(100);
+  66   1        LCD_StringWrite("DT", 2);
+  67   1      
+  68   1        LCD_CmdWrite(0x87);
+  69   1        sdelay(100);
+  70   1        LCD_StringWrite("CT", 2);
+  71   1      
+  72   1        LCD_CmdWrite(0x8C);
+  73   1        sdelay(100);
+  74   1        LCD_StringWrite("Time", 4);
+  75   1      
+  76   1        PIN=1;
+  77   1      
+  78   1        while(1){
+  79   2      
+  80   2      
+  81   2          if(PIN==1){ // Set mode
+  82   3      
+  83   3            LED=0;
+  84   3      
+  85   3            while(1)                        // endless 
+  86   3            {
+  87   4              
+  88   4              CS_BAR = 0;                 // enable ADC as slave     
+  89   4              SPDAT= 0x01;        // Write start bit to start ADC 
+  90   4              while(!transmit_completed); // wait end of transmition; TILL SPIF = 1 i.e. MSB of SPSTA
+  91   4              transmit_completed = 0;     // clear software transfert flag 
+  92   4              
+  93   4              SPDAT= 0x80;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+  94   4              while(!transmit_completed); // wait end of transmition 
+  95   4              data_save_high = serial_data & 0x03;  
+  96   4              transmit_completed = 0;     // clear software transfer flag 
+  97   4                  
+  98   4              SPDAT= 0x00;                // 
+  99   4              while(!transmit_completed); // wait end of transmition 
+ 100   4              data_save_low = serial_data;
+ 101   4              transmit_completed = 0;     // clear software transfer flag 
+ 102   4              CS_BAR = 1;                 // disable ADC as slave
+ 103   4              
+ 104   4              adcVal = (data_save_high <<8) + (data_save_low);  // Value at adc
+ 105   4      
+ 106   4              samples_counter++;
+ 107   4              adcValue+=adcVal;
+ 108   4              if(samples_counter!=10) continue;
+ 109   4              else{
+ 110   5                samples_counter=0;
+ 111   5                avgVal = adcValue/1024;     //Average
+ 112   5                avgVal *= 50;
+ 113   5                adcValue=0;
+ 114   5      
+ 115   5                temp[0]=avgVal/100;
+ 116   5                temp[0]%=10;
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 03:31:11 PAGE 3   
+
+ 117   5                temp[1]=avgVal/10;
+ 118   5                temp[1]%=10;
+ 119   5                temp[2]=avgVal;
+ 120   5                temp[2]%=10;
+ 121   5          
+ 122   5                LCD_CmdWrite(0xC0);
+ 123   5                sdelay(100);
+ 124   5      
+ 125   5                for(i=0; i<3; i++){
+ 126   6                  // temp = int_to_string(temp[i]);
+ 127   6                  LCD_DataWrite(temp[i]+'0');
+ 128   6                }
+ 129   5      
+ 130   5              }
+ 131   4              break;
+ 132   4              }
+ 133   3      
+ 134   3          }
+ 135   2          else{
+ 136   3            LED=1;
+ 137   3            while(1)                        // endless 
+ 138   3            {
+ 139   4              
+ 140   4              CS_BAR = 0;                 // enable ADC as slave     
+ 141   4              SPDAT= 0x01;        // Write start bit to start ADC 
+ 142   4              while(!transmit_completed); // wait end of transmition; TILL SPIF = 1 i.e. MSB of SPSTA
+ 143   4              transmit_completed = 0;     // clear software transfert flag 
+ 144   4              
+ 145   4              SPDAT= 0x90;        // 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+ 146   4              while(!transmit_completed); // wait end of transmition 
+ 147   4              data_save_high = serial_data & 0x03;  
+ 148   4              transmit_completed = 0;     // clear software transfer flag 
+ 149   4                  
+ 150   4              SPDAT= 0x00;                // 
+ 151   4              while(!transmit_completed); // wait end of transmition 
+ 152   4              data_save_low = serial_data;
+ 153   4              transmit_completed = 0;     // clear software transfer flag 
+ 154   4              CS_BAR = 1;                 // disable ADC as slave
+ 155   4              
+ 156   4              adcVal = (data_save_high <<8) + (data_save_low);  // Value at adc
+ 157   4      
+ 158   4              samples_counter++;
+ 159   4              adcValue+=adcVal;
+ 160   4              if(samples_counter!=10) continue;
+ 161   4              else{
+ 162   5                samples_counter=0;
+ 163   5                avgVal = adcValue/1024;     //Average
+ 164   5                avgVal *= 50;
+ 165   5                adcValue=0;
+ 166   5      
+ 167   5                temp[0]=avgVal/100;
+ 168   5                temp[0]%=10;
+ 169   5                temp[1]=avgVal/10;
+ 170   5                temp[1]%=10;
+ 171   5                temp[2]=avgVal;
+ 172   5                temp[2]%=10;
+ 173   5          
+ 174   5                LCD_CmdWrite(0xC6);
+ 175   5                sdelay(100);
+ 176   5      
+ 177   5                for(i=0; i<3; i++){
+ 178   6                  // temp = int_to_string(temp[i]);
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 03:31:11 PAGE 4   
+
+ 179   6                  LCD_DataWrite(temp[i]+'0');
+ 180   6                }
+ 181   5                
+ 182   5              }
+ 183   4              break;
+ 184   4              }
+ 185   3          }
+ 186   2      
+ 187   2          PIN=1;
+ 188   2          delay_ms(1000);
+ 189   2          // LED=PIN;
+ 190   2        }
+ 191   1      
+ 192   1      
+ 193   1      
+ 194   1      
+ 195   1      
+ 196   1      /* Main Ends */
+ 197   1      }
+ 198          
+ 199          
+ 200          // void split_into_characters(unsigned int number, char num_of_char, unsigned char* array){
+ 201          //  for ( i=num_of_char-1; i>=0; i--)
+ 202          //  {
+ 203          //    /* code */
+ 204          //    array[i]=number%10;
+ 205          //    number/=10;
+ 206          //  }
+ 207          // }
+ 208          
+ 209          
+ 210          
+ 211          /**
+ 212           * FUNCTION_PURPOSE:interrupt
+ 213           * FUNCTION_INPUTS: void
+ 214           * FUNCTION_OUTPUTS: transmit_complete is software transfert flag
+ 215           */
+ 216          void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = interrupt no.*/
+ 217          {
+ 218   1        switch  ( SPSTA )         /* read and clear spi status register */
+ 219   1        {
+ 220   2          case 0x80:  
+ 221   2            serial_data=SPDAT;   /* read receive data */
+ 222   2                transmit_completed=1;/* set software flag */
+ 223   2          break;
+ 224   2      
+ 225   2          case 0x10:
+ 226   2               /* put here for mode fault tasking */  
+ 227   2          break;
+ 228   2        
+ 229   2          case 0x40:
+ 230   2               /* put here for overrun tasking */ 
+ 231   2          break;
+ 232   2        }
+ 233   1      }
+ 234          
+ 235          /**
+ 236          
+ 237           * FUNCTION_INPUTS:  P1.5(MISO) serial input  
+ 238           * FUNCTION_OUTPUTS: P1.7(MOSI) serial output
+ 239           *                   P1.4(SSbar)
+ 240                               P1.6(SCK)
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 03:31:11 PAGE 5   
+
+ 241           */ 
+ 242          void SPI_Init()
+ 243          {
+ 244   1        CS_BAR = 1;                     // DISABLE ADC SLAVE SELECT-CS 
+ 245   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
+ 246   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
+ 247   1        SPCON |= 0x10;                  // Master mode 
+ 248   1        SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
+ 249   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
+ 250   1        IEN1 |= 0x04;                   // enable spi interrupt 
+ 251   1        EA=1;                           // enable interrupts 
+ 252   1        SPCON |= 0x40;                  // run spi;ENABLE SPI INTERFACE SPEN= 1 
+ 253   1      }
+ 254          
+ 255          // -------------------------------------------- LCD s
+ 256          
+ 257          /**
+ 258           * FUNCTION_PURPOSE:LCD Initialization
+ 259           * FUNCTION_INPUTS: void
+ 260           * FUNCTION_OUTPUTS: none
+ 261           */
+ 262          void LCD_Init()
+ 263          {
+ 264   1        sdelay(100);
+ 265   1        LCD_CmdWrite(0x38);       // LCD 2lines, 5*7 matrix
+ 266   1        LCD_CmdWrite(0x0C);     // Display ON cursor ON  Blinking off
+ 267   1        LCD_CmdWrite(0x01);     // Clear the LCD
+ 268   1        LCD_CmdWrite(0x80);     // Cursor to First line First Position
+ 269   1      }
+ 270          
+ 271          /**
+ 272           * FUNCTION_PURPOSE: Write Command to LCD
+ 273           * FUNCTION_INPUTS: cmd- command to be written
+ 274           * FUNCTION_OUTPUTS: none
+ 275           */
+ 276          void LCD_CmdWrite(char cmd)
+ 277          {
+ 278   1        LCD_Ready();
+ 279   1        LCD_data=cmd;           // Send the command to LCD
+ 280   1        LCD_rs=0;               // Select the Command Register by pulling LCD_rs LOW
+ 281   1        LCD_rw=0;               // Select the Write Operation  by pulling RW LOW
+ 282   1        LCD_en=1;               // Send a High-to-Low Pusle at Enable Pin
+ 283   1        sdelay(5);
+ 284   1        LCD_en=0;
+ 285   1        sdelay(5);
+ 286   1      }
+ 287          
+ 288          /**
+ 289           * FUNCTION_PURPOSE: Write Command to LCD
+ 290           * FUNCTION_INPUTS: dat- data to be written
+ 291           * FUNCTION_OUTPUTS: none
+ 292           */
+ 293          void LCD_DataWrite( char dat)
+ 294          {
+ 295   1        LCD_Ready();
+ 296   1          LCD_data=dat;           // Send the data to LCD
+ 297   1          LCD_rs=1;             // Select the Data Register by pulling LCD_rs HIGH
+ 298   1          LCD_rw=0;               // Select the Write Operation by pulling RW LOW
+ 299   1          LCD_en=1;             // Send a High-to-Low Pusle at Enable Pin
+ 300   1          sdelay(5);
+ 301   1          LCD_en=0;
+ 302   1        sdelay(5);
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 03:31:11 PAGE 6   
+
+ 303   1      }
+ 304          
+ 305          /**
+ 306           * FUNCTION_PURPOSE: Write a string on the LCD Screen
+ 307           * FUNCTION_INPUTS: 1. str - pointer to the string to be written, 
+ 308                              2. length - length of the array
+ 309           * FUNCTION_OUTPUTS: none
+ 310           */
+ 311          void LCD_StringWrite( char * str, unsigned char length)
+ 312          {
+ 313   1          while(length>0)
+ 314   1          {
+ 315   2              LCD_DataWrite(*str);
+ 316   2              str++;
+ 317   2              length--;
+ 318   2          }
+ 319   1      }
+ 320          
+ 321          /**
+ 322           * FUNCTION_PURPOSE: To check if the LCD is ready to communicate
+ 323           * FUNCTION_INPUTS: void
+ 324           * FUNCTION_OUTPUTS: none
+ 325           */
+ 326          void LCD_Ready()
+ 327          {
+ 328   1        LCD_data = 0xFF;
+ 329   1        LCD_rs = 0;
+ 330   1        LCD_rw = 1;
+ 331   1        LCD_en = 0;
+ 332   1        sdelay(5);
+ 333   1        LCD_en = 1;
+ 334   1        while(LCD_busy == 1)
+ 335   1        {
+ 336   2          LCD_en = 0;
+ 337   2          LCD_en = 1;
+ 338   2        }
+ 339   1        LCD_en = 0;
+ 340   1      }
+ 341          
+ 342          /**
+ 343           * FUNCTION_PURPOSE: A delay of 15us for a 24 MHz crystal
+ 344           * FUNCTION_INPUTS: void
+ 345           * FUNCTION_OUTPUTS: none
+ 346           */
+ 347          void sdelay(int delay)
+ 348          {
+ 349   1        char d=0;
+ 350   1        while(delay>0)
+ 351   1        {
+ 352   2          for(d=0;d<5;d++);
+ 353   2          delay--;
+ 354   2        }
+ 355   1      }
+ 356          
+ 357          /**
+ 358           * FUNCTION_PURPOSE: A delay of around 1000us for a 24MHz crystel
+ 359           * FUNCTION_INPUTS: void
+ 360           * FUNCTION_OUTPUTS: none
+ 361           */
+ 362          void delay_ms(int delay)
+ 363          {
+ 364   1        int d=0;
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 03:31:11 PAGE 7   
+
+ 365   1        while(delay>0)
+ 366   1        {
+ 367   2          for(d=0;d<382;d++);
+ 368   2          delay--;
+ 369   2        }
+ 370   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    741    ----
+   CONSTANT SIZE    =     11    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     16       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      3    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
