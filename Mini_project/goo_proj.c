@@ -4,13 +4,14 @@
 
 void SPI_Init();
 void LCD_Init();
-// void Timer_Init();
+void Timer_Init();
 void LCD_DataWrite(char dat);
 void LCD_CmdWrite(char cmd);
 void LCD_StringWrite(char * str, unsigned char len);
 void LCD_Ready();
 void sdelay(int delay);
 void delay_ms(int delay);
+void update_time();
 // char int_to_string(int val);
 // void init_control();
 // int set();
@@ -33,15 +34,16 @@ sbit ONULL = P1^0;
 bit transmit_completed= 0;							// To check if spi data transmit is complete
 bit offset_null = 0;								// Check if offset nulling is enabled
 bit roundoff = 0;
-unsigned int adcVal=0, avgVal=0, initVal=0, adcValue = 0; //, timerVal=0;
+unsigned int adcVal=0, avgVal=0, initVal=0, adcValue = 0, total_time_in_sec=0; //, timerVal=0;
 unsigned char serial_data;
 unsigned char data_save_high;
 unsigned char data_save_low;
-unsigned char i=0, samples_counter=0;
-unsigned char temp[3];
+unsigned char i=0, samples_counter=0, timer_count=40;
+unsigned char temp[3], time[4];
 // unsigned char voltage[3]; //,time[3];
 
-unsigned int CT, del_T=5;
+unsigned int del_T=5;
+unsigned int CT=0;
 unsigned int DT=35;
 // unsigned int timer_cycles=0;
 // bit start_timer=0;
@@ -49,6 +51,7 @@ sbit PIN = P1^0;		// This is to check the mode of the Temperature Controller
 sbit RELAY = P3^7;		// This pins drives the delay
 sbit LED = P3^6;		// just an LED
 
+bit flag=1;
 
 void main(void){
 	P3 = 0X00;											// Make Port 3 output 
@@ -58,7 +61,7 @@ void main(void){
 	
 	SPI_Init();
 	LCD_Init();
-	// Timer_Init();
+	Timer_Init();
 	
 	/* First Line */
 	LCD_CmdWrite(0x81);
@@ -72,6 +75,19 @@ void main(void){
 	LCD_CmdWrite(0x8C);
 	sdelay(100);
 	LCD_StringWrite("Time", 4);
+
+	LCD_CmdWrite(0xC0);
+	sdelay(100);
+
+	temp[0]=DT/100;
+	temp[0]%=10;
+	temp[1]=DT/10;
+	temp[1]%=10;
+	temp[2]=DT;
+	temp[2]%=10;
+	for(i=0; i<3; i++){
+		LCD_DataWrite(temp[i]+'0');
+	}
 
 	PIN=1;
 	RELAY=0;
@@ -110,10 +126,29 @@ void main(void){
 				if(samples_counter!=10) continue;
 				else{
 					samples_counter=0;
-					avgVal = adcValue/1024;			//Average
-					avgVal *= 50;
-					DT=avgVal;
+					avgVal = adcValue/200;			//Average
 					adcValue=0;
+
+					if(avgVal < 5){
+						avgVal = 0;
+					}
+					else if(5<avgVal && avgVal<15){
+						avgVal = 10;
+					}
+					else if(15<avgVal && avgVal<25){
+						avgVal = 20;
+					}
+					else if(25<avgVal && avgVal<35){
+						avgVal = 30;
+					}
+					else if(35<avgVal && avgVal<45){
+						avgVal = 40;
+					}
+					else{
+						avgVal = 50;
+					}
+					avgVal+=35;
+					DT=avgVal;
 
 					temp[0]=avgVal/100;
 					temp[0]%=10;
@@ -126,17 +161,25 @@ void main(void){
 					sdelay(100);
 
 					for(i=0; i<3; i++){
-						// temp = int_to_string(temp[i]);
 						LCD_DataWrite(temp[i]+'0');
 					}
-
 				}
+
+				for ( i = 0; i<4; ++i) time[i]=0;
+				update_time();
+
+				total_time_in_sec=0;
+				flag=1;
+				TR0=0;
 				break;
 		  	}
 
 		}
-		else{
+		else{	// RUN mode
+
 			LED=1;
+
+
 			while(1)												// endless 
 			{
 				
@@ -163,8 +206,7 @@ void main(void){
 				if(samples_counter!=10) continue;
 				else{
 					samples_counter=0;
-					avgVal = adcValue/1024;			//Average
-					avgVal *= 50;
+					avgVal = adcValue/20;			//Average
 					CT=avgVal;
 					adcValue=0;
 
@@ -179,7 +221,6 @@ void main(void){
 					sdelay(100);
 
 					for(i=0; i<3; i++){
-						// temp = int_to_string(temp[i]);
 						LCD_DataWrite(temp[i]+'0');
 					}
 					
@@ -193,6 +234,27 @@ void main(void){
 			}
 			else if( (DT-del_T) > CT ){
 				RELAY=1;
+			}
+
+			if(flag==1){
+				TR0=1;
+
+				time[0]=total_time_in_sec/1000;
+				time[0]%=10;
+				time[1]=total_time_in_sec/100;
+				time[1]%=10;
+				time[2]=total_time_in_sec/10;
+				time[2]%=10;
+				time[3]=total_time_in_sec;
+				time[3]%=10;
+				update_time();
+
+				if(CT > DT){
+					flag=0;
+					IE &= 0xFD;
+					TR0=0;
+				}
+				else flag=1;
 			}
 
 		}
@@ -210,6 +272,17 @@ void main(void){
 }
 
 
+void update_time(){
+
+	LCD_CmdWrite(0xCC);
+	sdelay(100);
+
+	for(i=0; i<4; i++){
+		LCD_DataWrite(time[i]+'0');
+	}
+
+}
+
 // void split_into_characters(unsigned int number, char num_of_char, unsigned char* array){
 // 	for ( i=num_of_char-1; i>=0; i--)
 // 	{
@@ -220,6 +293,37 @@ void main(void){
 // }
 
 
+
+// -------------------------------------------------------Timer
+void Timer_Init()
+{
+	// Set Timer0 to work in up counting 16 bit mode. Counts upto 
+	// 65536 depending upon the calues of TH0 and TL0
+	// The timer counts 65536 processor cycles. A processor cycle is 
+	// 12 clocks. FOr 24 MHz, it takes 65536/2 uS to overflow
+    
+	TH0 = 0x3C;							//Initialize TH0
+	TL0 = 0xAF;							//Initialize TL0
+	TMOD = 0x01; 						//Configure TMOD
+	IE |= 0x82; 						//Enable interrupt
+	TR0 = 0;							//Set TR0
+}
+
+void timer0_ISR (void) interrupt 1			
+{
+	//Initialize TH0
+	//Initialize TL0
+	//Increment Overflow 
+	//Write averaging of 10 samples code here
+
+	if(timer_count==0){							// 1000ms passed
+		total_time_in_sec++;
+		timer_count=40;
+	}
+	else timer_count--;
+}
+
+//----------------------------------------SPI
 
 /**
  * FUNCTION_PURPOSE:interrupt

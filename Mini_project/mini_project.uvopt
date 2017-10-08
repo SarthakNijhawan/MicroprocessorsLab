@@ -189,8 +189,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>.\mini_project.c</PathWithFileName>
-      <FilenameWithoutPath>mini_project.c</FilenameWithoutPath>
+      <PathWithFileName>.\goo_proj.c</PathWithFileName>
+      <FilenameWithoutPath>goo_proj.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

@@ -369,9 +369,9 @@
               <FilePath>.\STARTUP.A51</FilePath>
             </File>
             <File>
-              <FileName>mini_project.c</FileName>
+              <FileName>goo_proj.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\mini_project.c</FilePath>
+              <FilePath>.\goo_proj.c</FilePath>
             </File>
           </Files>
         </Group>
