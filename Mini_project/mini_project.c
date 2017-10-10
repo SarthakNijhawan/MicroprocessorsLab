@@ -1,8 +1,3 @@
-/**
- SPI HOMEWORK2, LABWORK2 (SAME PROGRAM)
- */
-
-/* @section  INCLUDES */
 #include "at89c5131.h"
 #include "stdio.h"
 #define LCD_data  P2	    					// LCD Data port
@@ -16,14 +11,14 @@ void LCD_StringWrite(char * str, unsigned char len);
 void LCD_Ready();
 void sdelay(int delay);
 void delay_ms(int delay);
-char int_to_string(int val);
-void init_control();
-int set();
-void run();
-void split_into_characters(int number, char num_of_char, unsigned char* array);
+void update_time();
+// char int_to_string(int val);
+// void init_control();
+// int set();
+// void run();
+// void split_into_characters(int number, char num_of_char, unsigned char* array);
 
 sfr IE=0xA8;
-char temp;
 
 sbit LED_debug_1 = P1^7;
 sbit LED_debug_2 = P1^6;
@@ -39,30 +34,26 @@ sbit ONULL = P1^0;
 bit transmit_completed= 0;							// To check if spi data transmit is complete
 bit offset_null = 0;								// Check if offset nulling is enabled
 bit roundoff = 0;
-unsigned int adcVal=0, avgVal=0, initVal=0, adcValue = 0; //, timerVal=0;
+unsigned int adcVal=0, avgVal=0, initVal=0, adcValue = 0, total_time_in_sec=0; //, timerVal=0;
 unsigned char serial_data;
 unsigned char data_save_high;
 unsigned char data_save_low;
-unsigned char i=0, samples_counter=0;
-unsigned char voltage[3]; //,time[3];
+unsigned char i=0, samples_counter=0, timer_count=40;
+unsigned char temp[3], time[4];
+// unsigned char voltage[3]; //,time[3];
 
-unsigned int CT, del_T=5;
+unsigned int del_T=5;
+unsigned int CT=0;
 unsigned int DT=35;
 // unsigned int timer_cycles=0;
 // bit start_timer=0;
-sbit PIN = P1^3;		// This is to check the mode of the Temperature Controller
+sbit PIN = P1^0;		// This is to check the mode of the Temperature Controller
 sbit RELAY = P3^7;		// This pins drives the delay
-//sbit LED = P1^5;		// just an LED
+sbit LED = P3^6;		// just an LED
 
-/**
+bit flag=1;
 
- * FUNCTION_INPUTS:  P1.5(MISO) serial input  
- * FUNCTION_OUTPUTS: P1.7(MOSI) serial output
- *                   P1.4(SSbar)
-                     P1.6(SCK)
- */
-void main(void)
-{
+void main(void){
 	P3 = 0X00;											// Make Port 3 output 
 	P2 = 0x00;											// Make Port 2 output 
 	P1 &= 0xEF;											// Make P1 Pin4-7 output
@@ -85,247 +76,254 @@ void main(void)
 	sdelay(100);
 	LCD_StringWrite("Time", 4);
 
-	/* Control Signals Initialisation */
-	init_control();
+	LCD_CmdWrite(0xC0);
+	sdelay(100);
 
-	//LED=1;					// Is always kept in set mode
-
-	while(1){
-
-
-		
-		if(PIN==1){  /* PIN is in mode SET */
-			// start_timer=1;	/* To start the timer when set in run mode */
-			
-			/* Time is set to zero */
-			// timerVal=0;			// Initial time value
-			// timer_cycles=0;
-			// split_into_characters(timerVal, 3, time);
-
-			/* displaying time */	
-			// LCD_CmdWrite(0xCC);
-			// sdelay(100);
-
-			// for(i=0; i<3; i++){
-			// 	temp = int_to_string(time[i]);
-			// 	LCD_DataWrite(temp);
-			// }
-			LED_debug_1 = 1;
-			LED_debug_2 = 1;
-			LED_debug_3 = 1;
-			LED_debug_4 = 1;
-
-			DT=set();
-
-			/* Delay in Sampling */
-			delay_ms(500);
-		}
-		else{	/* PIN is in mode RUN */
-			// if(start_timer==1){
-			// 	TR0=1;	// Start timer for the first time mode is toggled from set to run
-			// }
-
-			LED_debug_1 = 0;
-			LED_debug_2 = 0;
-			LED_debug_3 = 0;
-			LED_debug_4 = 0;
-			run();
-			delay_ms(1000);
-		}
-	}
-}
-
-int set(){	/* Reads ADC value from channel 0 */
-	while(1){
-
-		CS_BAR = 0;                 // enable ADC as slave		 
-		SPDAT= 0x01;				// Write start bit to start ADC 
-		while(!transmit_completed);	// wait end of transmition; TILL SPIF = 1 i.e. MSB of SPSTA
-		transmit_completed = 0;    	// clear software transfert flag 
-		
-		SPDAT= 0x80;				// 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
-		while(!transmit_completed);	// wait end of transmition 
-		data_save_high = serial_data & 0x03;  
-		transmit_completed = 0;    	// clear software transfer flag 
-				
-		SPDAT= 0x00;								// 
-		while(!transmit_completed);	// wait end of transmition 
-		data_save_low = serial_data;
-		transmit_completed = 0;    	// clear software transfer flag 
-		CS_BAR = 1;                	// disable ADC as slave
-		
-		adcVal = (data_save_high <<8) + (data_save_low);	// Value at adc
-
-		/* Starts Sampling */
-		samples_counter++;
-		adcValue+=adcVal;
-		if(samples_counter!=10) continue;
-		else{
-			samples_counter=0;
-			avgVal = adcValue/200;			//Average
-			adcValue=0;
-			if(avgVal < 5){
-				avgVal = 0;
-			}
-			else if(5<avgVal && avgVal<15){
-				avgVal = 10;
-			}
-			else if(15<avgVal && avgVal<25){
-				avgVal = 20;
-			}
-			else if(25<avgVal && avgVal<35){
-				avgVal = 30;
-			}
-			else if(35<avgVal && avgVal<45){
-				avgVal = 40;
-			}
-			else{
-				avgVal = 50;
-			}
-			avgVal+=35;	// Final Temperature Value
-
-			// if(start_timer==0){
-			// 	TR0=0;
-			// 	start_timer=1;
-			// 	timerVal=(TH0<<8) + TL0;
-			// 	split_into_characters(timerVal, 3, time);
-			// 	timerVal=0;
-
-			// 	LCD_CmdWrite(0xCC);
-			// 	sdelay(100);
-
-			// 	/* Updates the time */
-			// 	for(i=0; i<3; i++){
-			// 		temp = int_to_string(time[i]);
-			// 		LCD_DataWrite(temp);
-			// 	}
-			// }
-
-			/* Splits the value into character array for Tx */
-			split_into_characters(avgVal, 3, &voltage);
-
-			/* Writes on the second line below DT */
-			LCD_CmdWrite(0xC0);
-			sdelay(100);
-
-			for(i=0; i<3; i++){
-				temp = int_to_string(voltage[i]);
-				LCD_DataWrite(temp);
-			}
-		}
-
-		PIN=1;				// Ensure that PIN is set as an input pin
-		return avgVal;
-	}	  	
-}
-
-void run(){	/* Reads from Channel 1 */
-
-	while(1){
-
-		CS_BAR = 0;                 // enable ADC as slave		 
-		SPDAT= 0x01;				// Write start bit to start ADC 
-		while(!transmit_completed);	// wait end of transmition; TILL SPIF = 1 i.e. MSB of SPSTA
-		transmit_completed = 0;    	// clear software transfert flag 
-		
-		SPDAT= 0x90;				// 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
-		while(!transmit_completed);	// wait end of transmition 
-		data_save_high = serial_data & 0x03;  
-		transmit_completed = 0;    	// clear software transfer flag 
-				
-		SPDAT= 0x00;								// 
-		while(!transmit_completed);	// wait end of transmition 
-		data_save_low = serial_data;
-		transmit_completed = 0;    	// clear software transfer flag 
-		CS_BAR = 1;                	// disable ADC as slave
-		
-		adcVal = (data_save_high <<8) + (data_save_low);	// Value at adc
-
-		/* Starts Sampling */
-		samples_counter++;
-		adcValue+=adcVal;
-		if(samples_counter!=10) continue;
-		else{
-			samples_counter=0;
-			avgVal = adcValue/20;			//Average
-			adcValue=0;
-
-			split_into_characters(avgVal, 3, &voltage);
-
-			/* Writes on the second line below DT */
-			LCD_CmdWrite(0xC6);
-			sdelay(100);
-
-			/* Displays the current Tempearture */
-			for(i=0; i<3; i++){
-				temp = int_to_string(voltage[i]);
-				LCD_DataWrite(temp);
-			}
-		}
-
-		// if( TR0 && (DT<avgVal) ){
-		// 		TR0=0;
-		// 		start_timer=1;
-		// 		timerVal=(TH0<<8) + TL0;
-		// 		split_into_characters(timerVal, 3, time);
-		// 		timerVal=0;
-
-		// 		LCD_CmdWrite(0xCC);
-		// 		sdelay(100);
-
-		// 		/* Updates the time */
-		// 		for(i=0; i<3; i++){
-		// 			temp = int_to_string(time[i]);
-		// 			LCD_DataWrite(temp);
-		// 		}
-		// 	}
-
-		CT=avgVal;
-
-		// if(DT > CT){
-		// 	LED=~LED;
-		// 	timerVal++;
-		// 	split_into_characters(CT, 3, time);
-		// 	/* displaying time */	
-		// 	LCD_CmdWrite(0xCC);
-		// 	sdelay(100);
-
-		// 	for(i=0; i<3; i++){
-		// 		temp = int_to_string(time[i]);
-		// 		LCD_DataWrite(temp);
-		// 	}
-		// }
-
-		/* Regulate Temperature */
-		if( (DT+del_T) < CT ){
-			RELAY=0;
-		}
-		else if( (DT-del_T) > CT ){
-			RELAY=1;
-		}
-
-		PIN=1;				// Ensure that PIN is set as an input pin
-		break;
+	temp[0]=DT/100;
+	temp[0]%=10;
+	temp[1]=DT/10;
+	temp[1]%=10;
+	temp[2]=DT;
+	temp[2]%=10;
+	for(i=0; i<3; i++){
+		LCD_DataWrite(temp[i]+'0');
 	}
 
-}
-
-void split_into_characters(unsigned int number, char num_of_char, unsigned char* array){
-	for ( i=num_of_char-1; i>=0; i--)
-	{
-		/* code */
-		array[i]=number%10;
-		number/=10;
-	}
-}
-
-void init_control(){
-	/* Switching off the power supply */
+	PIN=1;
 	RELAY=0;
 
-	/* Setting P1^0 as input */
-	PIN=1;
+	while(1){
+
+
+		if(PIN==1){ // Set mode
+
+			LED=0;
+			RELAY=0;
+
+			while(1)												// endless 
+			{
+				
+				CS_BAR = 0;                 // enable ADC as slave		 
+				SPDAT= 0x01;				// Write start bit to start ADC 
+				while(!transmit_completed);	// wait end of transmition; TILL SPIF = 1 i.e. MSB of SPSTA
+				transmit_completed = 0;    	// clear software transfert flag 
+				
+				SPDAT= 0x80;				// 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+				while(!transmit_completed);	// wait end of transmition 
+				data_save_high = serial_data & 0x03;  
+				transmit_completed = 0;    	// clear software transfer flag 
+						
+				SPDAT= 0x00;								// 
+				while(!transmit_completed);	// wait end of transmition 
+				data_save_low = serial_data;
+				transmit_completed = 0;    	// clear software transfer flag 
+				CS_BAR = 1;                	// disable ADC as slave
+				
+				adcVal = (data_save_high <<8) + (data_save_low);	// Value at adc
+
+				samples_counter++;
+				adcValue+=adcVal;
+				if(samples_counter!=10) continue;
+				else{
+					samples_counter=0;
+					avgVal = adcValue/200;			//Average
+					adcValue=0;
+
+					if(avgVal < 5){
+						avgVal = 0;
+					}
+					else if(5<avgVal && avgVal<15){
+						avgVal = 10;
+					}
+					else if(15<avgVal && avgVal<25){
+						avgVal = 20;
+					}
+					else if(25<avgVal && avgVal<35){
+						avgVal = 30;
+					}
+					else if(35<avgVal && avgVal<45){
+						avgVal = 40;
+					}
+					else{
+						avgVal = 50;
+					}
+					avgVal+=35;
+					DT=avgVal;
+
+					temp[0]=avgVal/100;
+					temp[0]%=10;
+					temp[1]=avgVal/10;
+					temp[1]%=10;
+					temp[2]=avgVal;
+					temp[2]%=10;
+		
+					LCD_CmdWrite(0xC0);
+					sdelay(100);
+
+					for(i=0; i<3; i++){
+						LCD_DataWrite(temp[i]+'0');
+					}
+				}
+
+				for ( i = 0; i<4; ++i) time[i]=0;
+				update_time();
+
+				total_time_in_sec=0;
+				flag=1;
+				TR0=0;
+				break;
+		  	}
+
+		}
+		else{	// RUN mode
+
+			LED=1;
+
+
+			while(1)												// endless 
+			{
+				
+				CS_BAR = 0;                 // enable ADC as slave		 
+				SPDAT= 0x01;				// Write start bit to start ADC 
+				while(!transmit_completed);	// wait end of transmition; TILL SPIF = 1 i.e. MSB of SPSTA
+				transmit_completed = 0;    	// clear software transfert flag 
+				
+				SPDAT= 0x90;				// 80H written to start ADC CH0 single ended sampling,refer ADC datasheet
+				while(!transmit_completed);	// wait end of transmition 
+				data_save_high = serial_data & 0x03;  
+				transmit_completed = 0;    	// clear software transfer flag 
+						
+				SPDAT= 0x00;								// 
+				while(!transmit_completed);	// wait end of transmition 
+				data_save_low = serial_data;
+				transmit_completed = 0;    	// clear software transfer flag 
+				CS_BAR = 1;                	// disable ADC as slave
+				
+				adcVal = (data_save_high <<8) + (data_save_low);	// Value at adc
+
+				samples_counter++;
+				adcValue+=adcVal;
+				if(samples_counter!=10) continue;
+				else{
+					samples_counter=0;
+					avgVal = adcValue/20;			//Average
+					CT=avgVal;
+					adcValue=0;
+
+					temp[0]=avgVal/100;
+					temp[0]%=10;
+					temp[1]=avgVal/10;
+					temp[1]%=10;
+					temp[2]=avgVal;
+					temp[2]%=10;
+		
+					LCD_CmdWrite(0xC6);
+					sdelay(100);
+
+					for(i=0; i<3; i++){
+						LCD_DataWrite(temp[i]+'0');
+					}
+					
+				}
+				break;
+		  	}
+
+		  	/* Regulate Temperature */
+		  	if( (DT+del_T) < CT ){
+				RELAY=0;
+			}
+			else if( (DT-del_T) > CT ){
+				RELAY=1;
+			}
+
+			if(flag==1){
+				TR0=1;
+
+				time[0]=total_time_in_sec/1000;
+				time[0]%=10;
+				time[1]=total_time_in_sec/100;
+				time[1]%=10;
+				time[2]=total_time_in_sec/10;
+				time[2]%=10;
+				time[3]=total_time_in_sec;
+				time[3]%=10;
+				update_time();
+
+				if(CT > DT){
+					flag=0;
+					IE &= 0xFD;
+					TR0=0;
+				}
+				else flag=1;
+			}
+
+		}
+
+		PIN=1;
+		delay_ms(1000);
+		// LED=PIN;
+	}
+
+
+
+
+
+/* Main Ends */
 }
+
+
+void update_time(){
+
+	LCD_CmdWrite(0xCC);
+	sdelay(100);
+
+	for(i=0; i<4; i++){
+		LCD_DataWrite(time[i]+'0');
+	}
+
+}
+
+// void split_into_characters(unsigned int number, char num_of_char, unsigned char* array){
+// 	for ( i=num_of_char-1; i>=0; i--)
+// 	{
+// 		/* code */
+// 		array[i]=number%10;
+// 		number/=10;
+// 	}
+// }
+
+
+
+// -------------------------------------------------------Timer
+void Timer_Init()
+{
+	// Set Timer0 to work in up counting 16 bit mode. Counts upto 
+	// 65536 depending upon the calues of TH0 and TL0
+	// The timer counts 65536 processor cycles. A processor cycle is 
+	// 12 clocks. FOr 24 MHz, it takes 65536/2 uS to overflow
+    
+	TH0 = 0x3C;							//Initialize TH0
+	TL0 = 0xAF;							//Initialize TL0
+	TMOD = 0x01; 						//Configure TMOD
+	IE |= 0x82; 						//Enable interrupt
+	TR0 = 0;							//Set TR0
+}
+
+void timer0_ISR (void) interrupt 1			
+{
+	//Initialize TH0
+	//Initialize TL0
+	//Increment Overflow 
+	//Write averaging of 10 samples code here
+
+	if(timer_count==0){							// 1000ms passed
+		total_time_in_sec++;
+		timer_count=40;
+	}
+	else timer_count--;
+}
+
+//----------------------------------------SPI
 
 /**
  * FUNCTION_PURPOSE:interrupt
@@ -351,11 +349,6 @@ void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = i
 	}
 }
 
-char int_to_string(int val){
-	val += 0x30;
-	return (char)val;
-}
-
 /**
 
  * FUNCTION_INPUTS:  P1.5(MISO) serial input  
@@ -375,25 +368,8 @@ void SPI_Init()
 	EA=1;                         	// enable interrupts 
 	SPCON |= 0x40;                	// run spi;ENABLE SPI INTERFACE SPEN= 1 
 }
-	/**
- * FUNCTION_PURPOSE:Timer Initialization
- * FUNCTION_INPUTS: void
- * FUNCTION_OUTPUTS: none
- */
 
-void Timer_Init()
-{
-	// Set Timer0 to work in up counting 16 bit mode. Counts upto 
-	// 65536 depending upon the calues of TH0 and TL0
-	// The timer counts 65536 processor cycles. A processor cycle is 
-	// 12 clocks. FOr 24 MHz, it takes 65536/2 uS to overflow
-    
-	TH0 = 0x00;							//Initialize TH0
-	TL0 = 0x00;							//Initialize TL0
-	TMOD = 0x01; 						//Configure TMOD 
-	TR0 = 0;							//Set TR0
-}
-
+// -------------------------------------------- LCD s
 
 /**
  * FUNCTION_PURPOSE:LCD Initialization
