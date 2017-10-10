@@ -12,11 +12,6 @@ void LCD_Ready();
 void sdelay(int delay);
 void delay_ms(int delay);
 void update_time();
-// char int_to_string(int val);
-// void init_control();
-// int set();
-// void run();
-// void split_into_characters(int number, char num_of_char, unsigned char* array);
 
 sfr IE=0xA8;
 
@@ -40,13 +35,11 @@ unsigned char data_save_high;
 unsigned char data_save_low;
 unsigned char i=0, samples_counter=0, timer_count=40;
 unsigned char temp[3], time[4];
-// unsigned char voltage[3]; //,time[3];
 
-unsigned int del_T=5;
+unsigned int del_T=2;
 unsigned int CT=0;
 unsigned int DT=35;
-// unsigned int timer_cycles=0;
-// bit start_timer=0;
+
 sbit PIN = P1^0;		// This is to check the mode of the Temperature Controller
 sbit RELAY = P3^7;		// This pins drives the delay
 sbit LED = P3^6;		// just an LED

@@ -1,4 +1,4 @@
-C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 05:53:18 PAGE 1   
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/10/2017 02:56:51 PAGE 1   
 
 
 C51 COMPILER V9.56.0.0, COMPILATION OF MODULE GOO_PROJ
@@ -62,7 +62,7 @@ line level    source
   52          sbit LED = P3^6;    // just an LED
   53          
   54          bit flag=1;
-C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 05:53:18 PAGE 2   
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/10/2017 02:56:51 PAGE 2   
 
   55          
   56          void main(void){
@@ -126,7 +126,7 @@ line level    source
  114   4              transmit_completed = 0;     // clear software transfer flag 
  115   4                  
  116   4              SPDAT= 0x00;                // 
-C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 05:53:18 PAGE 3   
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/10/2017 02:56:51 PAGE 3   
 
  117   4              while(!transmit_completed); // wait end of transmition 
  118   4              data_save_low = serial_data;
@@ -190,7 +190,7 @@ line level    source
  176   3      
  177   3          }
  178   2          else{ // RUN mode
-C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 05:53:18 PAGE 4   
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/10/2017 02:56:51 PAGE 4   
 
  179   3      
  180   3            LED=1;
@@ -254,7 +254,7 @@ line level    source
  238   3      
  239   3            if(flag==1){
  240   4              TR0=1;
-C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 05:53:18 PAGE 5   
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/10/2017 02:56:51 PAGE 5   
 
  241   4      
  242   4              time[0]=total_time_in_sec/1000;
@@ -318,7 +318,7 @@ line level    source
  300   1        // Set Timer0 to work in up counting 16 bit mode. Counts upto 
  301   1        // 65536 depending upon the calues of TH0 and TL0
  302   1        // The timer counts 65536 processor cycles. A processor cycle is 
-C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 05:53:18 PAGE 6   
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/10/2017 02:56:51 PAGE 6   
 
  303   1        // 12 clocks. FOr 24 MHz, it takes 65536/2 uS to overflow
  304   1          
@@ -382,7 +382,7 @@ line level    source
  362   1        SPCON |= 0x20;                  // P1.1(SSBAR) is available as standard I/O pin 
  363   1        SPCON |= 0x01;                  // Fclk Periph/4 AND Fclk Periph=12MHz ,HENCE SCK IE. BAUD RATE=3000KHz 
  364   1        SPCON |= 0x10;                  // Master mode 
-C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 05:53:18 PAGE 7   
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/10/2017 02:56:51 PAGE 7   
 
  365   1        SPCON &= ~0x08;                 // CPOL=0; transmit mode example|| SCK is 0 at idle state
  366   1        SPCON |= 0x04;                  // CPHA=1; transmit mode example 
@@ -446,7 +446,7 @@ line level    source
  424           * FUNCTION_INPUTS: 1. str - pointer to the string to be written, 
  425                              2. length - length of the array
  426           * FUNCTION_OUTPUTS: none
-C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 05:53:18 PAGE 8   
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/10/2017 02:56:51 PAGE 8   
 
  427           */
  428          void LCD_StringWrite( char * str, unsigned char length)
@@ -510,7 +510,7 @@ line level    source
  486   2        }
  487   1      }
 
-C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/08/2017 05:53:18 PAGE 9   
+C51 COMPILER V9.56.0.0   GOO_PROJ                                                          10/10/2017 02:56:51 PAGE 9   
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
