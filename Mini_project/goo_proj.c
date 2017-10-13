@@ -36,13 +36,12 @@ unsigned char data_save_low;
 unsigned char i=0, samples_counter=0, timer_count=40;
 unsigned char temp[3], time[4];
 
-unsigned int del_T=2;
-unsigned int CT=0;
-unsigned int DT=35;
+unsigned int del_T=2;			// Band is set to [DT-det_t, DT+det_t]
+unsigned int CT=0;				// Default current temperature
+unsigned int DT=40;				// Default desired temperature
 
-sbit PIN = P1^0;		// This is to check the mode of the Temperature Controller
-sbit RELAY = P3^7;		// This pins drives the delay
-sbit LED = P3^6;		// just an LED
+sbit PIN = P1^0;				// This is to check the mode of the Temperature Controller
+sbit RELAY = P3^7;				// This pins drives the relay switch
 
 bit flag=1;
 
@@ -54,9 +53,9 @@ void main(void){
 	
 	SPI_Init();
 	LCD_Init();
-	Timer_Init();
+	Timer_Init();			// initialise the timer
 	
-	/* First Line */
+	/* First Line on the LCD, updated only once */
 	LCD_CmdWrite(0x81);
 	sdelay(100);
 	LCD_StringWrite("DT", 2);
@@ -69,6 +68,8 @@ void main(void){
 	sdelay(100);
 	LCD_StringWrite("Time", 4);
 
+
+	/* Updating the default Desired temperature */
 	LCD_CmdWrite(0xC0);
 	sdelay(100);
 
@@ -85,15 +86,12 @@ void main(void){
 	PIN=1;
 	RELAY=0;
 
-	while(1){
+	while(1){								// Runs Forever
 
+		if(PIN==1){ 						// Set mode
+			RELAY=0;						// Relay is set to 0 initially
 
-		if(PIN==1){ // Set mode
-
-			LED=0;
-			RELAY=0;
-
-			while(1)												// endless 
+			while(1)						// Sampling starts 
 			{
 				
 				CS_BAR = 0;                 // enable ADC as slave		 
@@ -114,7 +112,7 @@ void main(void){
 				
 				adcVal = (data_save_high <<8) + (data_save_low);	// Value at adc
 
-				samples_counter++;
+				samples_counter++;			// Tracks the number of samples taken 
 				adcValue+=adcVal;
 				if(samples_counter!=10) continue;
 				else{
@@ -143,6 +141,7 @@ void main(void){
 					avgVal+=35;
 					DT=avgVal;
 
+					/* Updates the desired temperature */
 					temp[0]=avgVal/100;
 					temp[0]%=10;
 					temp[1]=avgVal/10;
@@ -158,20 +157,18 @@ void main(void){
 					}
 				}
 
+				/* Updates the time in SET mode to "0000" initially */
 				for ( i = 0; i<4; ++i) time[i]=0;
 				update_time();
 
-				total_time_in_sec=0;
-				flag=1;
-				TR0=0;
-				break;
+				total_time_in_sec=0;	// Total time is initially set to 0
+				flag=1;					// Flag ensures timer runs in the RUN mode
+				TR0=0;					// Timer is set OFF
+				break;					// Break out of the (sampling)loop
 		  	}
 
 		}
 		else{	// RUN mode
-
-			LED=1;
-
 
 			while(1)												// endless 
 			{
@@ -203,6 +200,7 @@ void main(void){
 					CT=avgVal;
 					adcValue=0;
 
+					/* Updates the current temperature */
 					temp[0]=avgVal/100;
 					temp[0]%=10;
 					temp[1]=avgVal/10;
@@ -222,15 +220,16 @@ void main(void){
 		  	}
 
 		  	/* Regulate Temperature */
-		  	if( (DT+del_T) < CT ){
+		  	if( (DT+del_T) <= CT ){
 				RELAY=0;
 			}
-			else if( (DT-del_T) > CT ){
+			else if( (DT-del_T) >= CT ){
 				RELAY=1;
 			}
 
+			/* Checks whether the timer has to be updated */
 			if(flag==1){
-				TR0=1;
+				TR0=1;							// Timer set ON
 
 				time[0]=total_time_in_sec/1000;
 				time[0]%=10;
@@ -242,10 +241,10 @@ void main(void){
 				time[3]%=10;
 				update_time();
 
-				if(CT > DT){
-					flag=0;
-					IE &= 0xFD;
-					TR0=0;
+				if(CT == DT){
+					flag=0;				// Time on LCD won;t be updated when flag is set to 0
+					IE &= 0xFD;			// Disable the timer interrupt
+					TR0=0;				// Switches OFF the timer
 				}
 				else flag=1;
 			}
@@ -254,13 +253,8 @@ void main(void){
 
 		PIN=1;
 		delay_ms(1000);
-		// LED=PIN;
+		/* While loop ends */
 	}
-
-
-
-
-
 /* Main Ends */
 }
 
@@ -276,18 +270,8 @@ void update_time(){
 
 }
 
-// void split_into_characters(unsigned int number, char num_of_char, unsigned char* array){
-// 	for ( i=num_of_char-1; i>=0; i--)
-// 	{
-// 		/* code */
-// 		array[i]=number%10;
-// 		number/=10;
-// 	}
-// }
 
-
-
-// -------------------------------------------------------Timer
+// -------------------------------------------------------Timer Functions
 void Timer_Init()
 {
 	// Set Timer0 to work in up counting 16 bit mode. Counts upto 
@@ -295,8 +279,8 @@ void Timer_Init()
 	// The timer counts 65536 processor cycles. A processor cycle is 
 	// 12 clocks. FOr 24 MHz, it takes 65536/2 uS to overflow
     
-	TH0 = 0x3C;							//Initialize TH0
-	TL0 = 0xAF;							//Initialize TL0
+	TH0 = 0x3C;							//Initialised to generate a delay of 25ms
+	TL0 = 0xAF;							//Initialised to generate a delay of 25ms
 	TMOD = 0x01; 						//Configure TMOD
 	IE |= 0x82; 						//Enable interrupt
 	TR0 = 0;							//Set TR0
@@ -316,7 +300,9 @@ void timer0_ISR (void) interrupt 1
 	else timer_count--;
 }
 
-//----------------------------------------SPI
+
+
+//----------------------------------------SPI Functions
 
 /**
  * FUNCTION_PURPOSE:interrupt
@@ -342,6 +328,7 @@ void it_SPI(void) interrupt 9 /* interrupt address is 0x004B, (Address -3)/8 = i
 	}
 }
 
+
 /**
 
  * FUNCTION_INPUTS:  P1.5(MISO) serial input  
@@ -362,7 +349,7 @@ void SPI_Init()
 	SPCON |= 0x40;                	// run spi;ENABLE SPI INTERFACE SPEN= 1 
 }
 
-// -------------------------------------------- LCD s
+// -------------------------------------------- LCD Functions 
 
 /**
  * FUNCTION_PURPOSE:LCD Initialization
