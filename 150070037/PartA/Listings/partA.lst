@@ -1,0 +1,103 @@
+C51 COMPILER V9.56.0.0   PARTA                                                             10/14/2017 01:32:07 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE PARTA
+OBJECT MODULE PLACED IN .\Objects\partA.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE partA.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\par
+                    -tA.lst) TABS(2) OBJECT(.\Objects\partA.obj)
+
+line level    source
+
+   1          #include "at89c5131.h"
+   2          #include "stdio.h"
+   3          
+   4          void pwm_sig(unsigned char dutyCycle);
+   5          void TimerInit();
+   6          
+   7          sfr IE=0xA8;
+   8          sbit PIN=P3^0;                // Output Pin
+   9          
+  10          unsigned char duty_cycle=60;
+  11          unsigned char high[2], low[2];        // initial values for the timer reg
+  12          
+  13          bit high_bit=1;               // checks
+  14          
+  15          // =================================== Main Function ===============================
+  16          
+  17          void main(void){
+  18   1      
+  19   1        pwm_sig(duty_cycle);
+  20   1      
+  21   1        while(1);
+  22   1        
+  23   1      }
+  24          
+  25          
+  26          
+  27          // ============================================ First Part
+  28          void TimerInit(){
+  29   1        TH0 = high[0];              //Initialised to generate a delay of 25ms
+  30   1        TL0 = high[1];              //
+  31   1        TMOD = 0x01;            //Configure TMOD
+  32   1        IE |= 0x82;             //Enable interrupt
+  33   1        TR0 = 0;              //Set TR0
+  34   1      }
+  35          
+  36          
+  37          void timer0_ISR (void) interrupt 1      
+  38          {
+  39   1        TR0=0;
+  40   1        if(high_bit==1){
+  41   2          // PIN=1;
+  42   2          TH0=low[0];
+  43   2          TL0=low[1];
+  44   2          high_bit=0;
+  45   2      
+  46   2        }
+  47   1        else{
+  48   2          // PIN=0;
+  49   2          
+  50   2          TH0=high[0];
+  51   2          TL0=high[1];
+  52   2          high_bit=1;
+  53   2        }
+  54   1      
+C51 COMPILER V9.56.0.0   PARTA                                                             10/14/2017 01:32:07 PAGE 2   
+
+  55   1        TR0=1;
+  56   1        PIN=~PIN;
+  57   1      }
+  58          
+  59          void pwm_sig(unsigned char dutyCycle){
+  60   1        unsigned int high_time = 65535 - dutyCycle*10;  // in uS
+  61   1        unsigned int low_time = 65535 - (100-dutyCycle)*10; 
+  62   1      
+  63   1        high_time+=1;
+  64   1        low_time+=1;
+  65   1      
+  66   1        high[1] = high_time%256;
+  67   1        high[0] = high_time>>8;
+  68   1        low[1] = low_time%256;
+  69   1        low[0] = low_time>>8;
+  70   1      
+  71   1        TimerInit();
+  72   1      
+  73   1        PIN=1;
+  74   1        high_bit=1;
+  75   1        TR0=1;          // Start Timer
+  76   1      }
+  77          
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    128    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

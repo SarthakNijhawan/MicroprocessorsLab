@@ -1,0 +1,183 @@
+C51 COMPILER V9.56.0.0   PARTB                                                             10/14/2017 01:32:48 PAGE 1   
+
+
+C51 COMPILER V9.56.0.0, COMPILATION OF MODULE PARTB
+OBJECT MODULE PLACED IN .\Objects\partB.obj
+COMPILER INVOKED BY: C:\Keil_v5\C51\BIN\C51.EXE partB.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\par
+                    -tB.lst) TABS(2) OBJECT(.\Objects\partB.obj)
+
+line level    source
+
+   1          #include "at89c5131.h"
+   2          #include "stdio.h"
+   3          #define LCD_data  P2                // LCD Data port
+   4          
+   5          void LCD_Init();
+   6          void LCD_DataWrite(char dat);
+   7          void LCD_CmdWrite(char cmd);
+   8          void LCD_StringWrite(char * str, unsigned char len);
+   9          void LCD_Ready();
+  10          void sdelay(int delay);
+  11          void delay_ms(int delay);
+  12          void lcd_disp();
+  13          
+  14          sbit LCD_rs = P0^0;                 // LCD Register Select
+  15          sbit LCD_rw = P0^1;                 // LCD Read/Write
+  16          sbit LCD_en = P0^2;                 // LCD Enable
+  17          sbit LCD_busy = P2^7;               // LCD Busy Flag
+  18          
+  19          // =================================== Main Function ===============================
+  20          
+  21          void main(void){
+  22   1      
+  23   1        LCD_Init();   
+  24   1        lcd_disp();
+  25   1        
+  26   1        while(1);
+  27   1        
+  28   1      }
+  29          
+  30          
+  31          // =========================================== Second Part
+  32          void lcd_disp(){
+  33   1        /* First Line on the LCD, updated only once */
+  34   1        LCD_CmdWrite(0x80);
+  35   1        sdelay(100);
+  36   1        LCD_StringWrite("Hello", 5);
+  37   1      }
+  38          
+  39          
+  40          // -------------------------------------------- LCD Functions 
+  41          
+  42          /**
+  43           * FUNCTION_PURPOSE:LCD Initialization
+  44           * FUNCTION_INPUTS: void
+  45           * FUNCTION_OUTPUTS: none
+  46           */
+  47          void LCD_Init()
+  48          {
+  49   1        sdelay(100);
+  50   1        LCD_CmdWrite(0x38);       // LCD 2lines, 5*7 matrix
+  51   1        LCD_CmdWrite(0x0C);     // Display ON cursor ON  Blinking off
+  52   1        LCD_CmdWrite(0x01);     // Clear the LCD
+  53   1        LCD_CmdWrite(0x80);     // Cursor to First line First Position
+  54   1      }
+C51 COMPILER V9.56.0.0   PARTB                                                             10/14/2017 01:32:48 PAGE 2   
+
+  55          
+  56          /**
+  57           * FUNCTION_PURPOSE: Write Command to LCD
+  58           * FUNCTION_INPUTS: cmd- command to be written
+  59           * FUNCTION_OUTPUTS: none
+  60           */
+  61          void LCD_CmdWrite(char cmd)
+  62          {
+  63   1        LCD_Ready();
+  64   1        LCD_data=cmd;           // Send the command to LCD
+  65   1        LCD_rs=0;               // Select the Command Register by pulling LCD_rs LOW
+  66   1        LCD_rw=0;               // Select the Write Operation  by pulling RW LOW
+  67   1        LCD_en=1;               // Send a High-to-Low Pusle at Enable Pin
+  68   1        sdelay(5);
+  69   1        LCD_en=0;
+  70   1        sdelay(5);
+  71   1      }
+  72          
+  73          /**
+  74           * FUNCTION_PURPOSE: Write Command to LCD
+  75           * FUNCTION_INPUTS: dat- data to be written
+  76           * FUNCTION_OUTPUTS: none
+  77           */
+  78          void LCD_DataWrite( char dat)
+  79          {
+  80   1        LCD_Ready();
+  81   1          LCD_data=dat;           // Send the data to LCD
+  82   1          LCD_rs=1;             // Select the Data Register by pulling LCD_rs HIGH
+  83   1          LCD_rw=0;               // Select the Write Operation by pulling RW LOW
+  84   1          LCD_en=1;             // Send a High-to-Low Pusle at Enable Pin
+  85   1          sdelay(5);
+  86   1          LCD_en=0;
+  87   1        sdelay(5);
+  88   1      }
+  89          
+  90          /**
+  91           * FUNCTION_PURPOSE: Write a string on the LCD Screen
+  92           * FUNCTION_INPUTS: 1. str - pointer to the string to be written, 
+  93                              2. length - length of the array
+  94           * FUNCTION_OUTPUTS: none
+  95           */
+  96          void LCD_StringWrite( char * str, unsigned char length)
+  97          {
+  98   1          while(length>0)
+  99   1          {
+ 100   2              LCD_DataWrite(*str);
+ 101   2              str++;
+ 102   2              length--;
+ 103   2          }
+ 104   1      }
+ 105          
+ 106          /**
+ 107           * FUNCTION_PURPOSE: To check if the LCD is ready to communicate
+ 108           * FUNCTION_INPUTS: void
+ 109           * FUNCTION_OUTPUTS: none
+ 110           */
+ 111          void LCD_Ready()
+ 112          {
+ 113   1        LCD_data = 0xFF;
+ 114   1        LCD_rs = 0;
+ 115   1        LCD_rw = 1;
+ 116   1        LCD_en = 0;
+C51 COMPILER V9.56.0.0   PARTB                                                             10/14/2017 01:32:48 PAGE 3   
+
+ 117   1        sdelay(5);
+ 118   1        LCD_en = 1;
+ 119   1        while(LCD_busy == 1)
+ 120   1        {
+ 121   2          LCD_en = 0;
+ 122   2          LCD_en = 1;
+ 123   2        }
+ 124   1        LCD_en = 0;
+ 125   1      }
+ 126          
+ 127          /**
+ 128           * FUNCTION_PURPOSE: A delay of 15us for a 24 MHz crystal
+ 129           * FUNCTION_INPUTS: void
+ 130           * FUNCTION_OUTPUTS: none
+ 131           */
+ 132          void sdelay(int delay)
+ 133          {
+ 134   1        char d=0;
+ 135   1        while(delay>0)
+ 136   1        {
+ 137   2          for(d=0;d<5;d++);
+ 138   2          delay--;
+ 139   2        }
+ 140   1      }
+ 141          
+ 142          /**
+ 143           * FUNCTION_PURPOSE: A delay of around 1000us for a 24MHz crystel
+ 144           * FUNCTION_INPUTS: void
+ 145           * FUNCTION_OUTPUTS: none
+ 146           */
+ 147          void delay_ms(int delay)
+ 148          {
+ 149   1        int d=0;
+ 150   1        while(delay>0)
+ 151   1        {
+ 152   2          for(d=0;d<382;d++);
+ 153   2          delay--;
+ 154   2        }
+ 155   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    238    ----
+   CONSTANT SIZE    =      6    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       6
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
